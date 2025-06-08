@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: book-management-api
+  docker:
+    compose:
+      file: ./compose.yaml
