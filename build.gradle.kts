@@ -45,3 +45,26 @@ kotlin {
 tasks.withType<Test> {
     useJUnitPlatform()
 }
+
+jooq {
+    configuration {
+        jdbc {
+            driver = "org.postgresql.Driver"
+            url = System.getenv("DB_URL") ?: "jdbc:postgresql://localhost:5432/book_management"
+            user = System.getenv("DB_USER") ?: "app"
+            password = System.getenv("DB_PASSWORD") ?: "password"
+        }
+
+        generator {
+            database {
+                name = "org.jooq.meta.postgres.PostgresDatabase"
+                inputSchema = "public"
+                includes = ".*"
+            }
+
+            target {
+                packageName = "com.k1e1n04.bookmanagement.jooq"
+            }
+        }
+    }
+}
