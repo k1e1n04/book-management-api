@@ -29,12 +29,12 @@ class GlobalExceptionHandler {
         val errors = ex.bindingResult.fieldErrors.map { error ->
             ValidationError(
                 field = error.field,
-                message = error.defaultMessage ?: "バリデーションエラーが発生しました"
+                message = error.defaultMessage ?: "バリデーションエラーが発生しました。"
             )
         }
 
         val errorResponse = ErrorResponse(
-            message = "入力値にエラーがあります",
+            message = "入力値にエラーがあります。",
             errors = errors
         )
 
