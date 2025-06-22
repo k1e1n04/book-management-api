@@ -37,6 +37,7 @@ dependencies {
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:postgresql")
     testImplementation("io.mockk:mockk:1.13.7")
+    testImplementation("com.ninja-squad:springmockk:4.0.2")
     jooqCodegen("org.postgresql:postgresql:42.7.3")
 }
 
