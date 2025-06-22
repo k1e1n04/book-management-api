@@ -33,6 +33,10 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation("org.springframework.boot:spring-boot-testcontainers")
+    testImplementation("org.testcontainers:junit-jupiter")
+    testImplementation("org.testcontainers:postgresql")
+    testImplementation("io.mockk:mockk:1.13.7")
     jooqCodegen("org.postgresql:postgresql:42.7.3")
 }
 
@@ -42,8 +46,30 @@ kotlin {
     }
 }
 
+sourceSets {
+    main {
+        java.srcDirs("build/generated-sources/jooq")
+    }
+}
+
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+// jOOQコード生成をコンパイル前に実行
+tasks.named("compileKotlin") {
+    dependsOn("jooqCodegen")
+}
+
+// KtLintから生成されたコードを除外
+tasks.withType<org.jlleitschuh.gradle.ktlint.tasks.BaseKtLintCheckTask> {
+    mustRunAfter("jooqCodegen")
+}
+
+configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
+    filter {
+        exclude("**/build/generated-sources/**")
+    }
 }
 
 jooq {
@@ -64,6 +90,7 @@ jooq {
 
             target {
                 packageName = "com.k1e1n04.bookmanagement.jooq"
+                directory = "build/generated-sources/jooq"
             }
         }
     }
