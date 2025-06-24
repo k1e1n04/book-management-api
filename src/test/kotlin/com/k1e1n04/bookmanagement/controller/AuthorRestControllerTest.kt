@@ -38,6 +38,10 @@ class AuthorRestControllerTest {
 
     private lateinit var objectMapper: ObjectMapper
 
+    companion object {
+        private val AUTHOR_ID_1: UUID = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
+    }
+
     @BeforeEach
     fun setUp() {
         objectMapper = ObjectMapper().registerModule(JavaTimeModule())
@@ -53,7 +57,7 @@ class AuthorRestControllerTest {
 
         val response =
             AuthorResponse(
-                id = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").toString(),
+                id = AUTHOR_ID_1.toString(),
                 name = "新しい著者",
                 dateOfBirth = "1990-01-01",
             )
@@ -96,7 +100,7 @@ class AuthorRestControllerTest {
 
     @Test
     fun `PUT authors should update existing author`() {
-        val authorId = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").toString()
+        val authorId = AUTHOR_ID_1.toString()
         val request =
             AuthorUpdateRequest(
                 name = "更新された著者",
@@ -127,7 +131,7 @@ class AuthorRestControllerTest {
 
     @Test
     fun `PUT authors should return 400 Bad Request for invalid input`() {
-        val authorId = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").toString()
+        val authorId = AUTHOR_ID_1.toString()
         val request =
             AuthorUpdateRequest(
                 name = "",

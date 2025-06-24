@@ -30,8 +30,8 @@ class AuthorServiceImplTest {
     private lateinit var authorService: AuthorServiceImpl
 
     companion object {
-        private val AUTHOR_ID_1: UUID = UUID.fromString("11111111-1111-1111-1111-111111111111")
-        private val AUTHOR_ID_2: UUID = UUID.fromString("22222222-2222-2222-2222-222222222222")
+        private val AUTHOR_ID_1: UUID = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
+        private val AUTHOR_ID_2: UUID = UUID.fromString("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb")
     }
 
     @Test
