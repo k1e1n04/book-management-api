@@ -30,19 +30,21 @@ class AuthorServiceImplTest  {
     @InjectMockKs
     private lateinit var authorService: AuthorServiceImpl
 
+    companion object {
+        private val AUTHOR_ID_1: UUID = UUID.fromString("11111111-1111-1111-1111-111111111111")
+        private val AUTHOR_ID_2: UUID = UUID.fromString("22222222-2222-2222-2222-222222222222")
+    }
+
     @Test
     fun `test getAllAuthors`() {
-        val authorId1 = UUID.randomUUID()
-        val authorId2 = UUID.randomUUID()
-
         val expected = listOf(
             AuthorResponse(
-                id = authorId1.toString(),
+                id = AUTHOR_ID_1.toString(),
                 name = "Author 1",
                 dateOfBirth = LocalDate.of(1990, 1, 1).toString()
             ),
             AuthorResponse(
-                id = authorId2.toString(),
+                id = AUTHOR_ID_2.toString(),
                 name = "Author 2",
                 dateOfBirth = LocalDate.of(1985, 5, 20).toString()
             )
@@ -52,12 +54,12 @@ class AuthorServiceImplTest  {
             authorRepository.findAll()
         } returns listOf(
             AuthorEntity(
-                id = authorId1,
+                id = AUTHOR_ID_1,
                 name = "Author 1",
                 dateOfBirth = LocalDate.of(1990, 1, 1)
             ),
             AuthorEntity(
-                id = authorId2,
+                id = AUTHOR_ID_2,
                 name = "Author 2",
                 dateOfBirth = LocalDate.of(1985, 5, 20)
             )
@@ -111,14 +113,13 @@ class AuthorServiceImplTest  {
 
     @Test
     fun `test updateAuthor`() {
-        val authorId = UUID.randomUUID()
         val request = AuthorUpdateRequest(
             name = "Updated Author",
             dateOfBirth = LocalDate.of(1990, 1, 1)
         )
 
-        every { authorRepository.findById(authorId) } returns AuthorEntity(
-            id = authorId,
+        every { authorRepository.findById(AUTHOR_ID_1) } returns AuthorEntity(
+            id = AUTHOR_ID_1,
             name = "Old Author",
             dateOfBirth = LocalDate.of(1985, 5, 20)
         )
@@ -126,26 +127,25 @@ class AuthorServiceImplTest  {
             it.invocation.args[0] as AuthorEntity
         }
 
-        val actual = authorService.updateAuthor(authorId.toString(), request)
+        val actual = authorService.updateAuthor(AUTHOR_ID_1.toString(), request)
 
-        assertThat(actual.id).isEqualTo(authorId.toString())
+        assertThat(actual.id).isEqualTo(AUTHOR_ID_1.toString())
         assertThat(actual.name).isEqualTo(request.name)
         assertThat(actual.dateOfBirth).isEqualTo(request.dateOfBirth.toString())
     }
 
     @Test
     fun `test updateAuthor throws NotFoundException when author does not exist`() {
-        val authorId = UUID.randomUUID()
         val request = AuthorUpdateRequest(
             name = "Updated Author",
             dateOfBirth = LocalDate.of(1990, 1, 1)
         )
 
-        every { authorRepository.findById(authorId) } returns null
+        every { authorRepository.findById(AUTHOR_ID_1) } returns null
 
-        assertThatThrownBy { authorService.updateAuthor(authorId.toString(), request) }
+        assertThatThrownBy { authorService.updateAuthor(AUTHOR_ID_1.toString(), request) }
             .isInstanceOf(NotFoundException::class.java)
-            .hasMessage("著者ID: $authorId は存在しません")
+            .hasMessage("著者ID: ${AUTHOR_ID_1.toString()} は存在しません")
             .extracting("userMessage")
             .isEqualTo("指定された著者は存在しません")
     }
@@ -167,19 +167,18 @@ class AuthorServiceImplTest  {
 
     @Test
     fun `test updateAuthor throws DomainValidationException when generate invalid Entity`() {
-        val authorId = UUID.randomUUID()
         val request = AuthorUpdateRequest(
             name = "",
             dateOfBirth = LocalDate.of(1990, 1, 1)
         )
 
-        every { authorRepository.findById(authorId) } returns AuthorEntity(
-            id = authorId,
+        every { authorRepository.findById(AUTHOR_ID_1) } returns AuthorEntity(
+            id = AUTHOR_ID_1,
             name = "Old Author",
             dateOfBirth = LocalDate.of(1985, 5, 20)
         )
 
-        assertThatThrownBy { authorService.updateAuthor(authorId.toString(), request) }
+        assertThatThrownBy { authorService.updateAuthor(AUTHOR_ID_1.toString(), request) }
             .isInstanceOf(DomainValidationException::class.java)
             .hasMessage("著者の名前は1文字以上、255文字以下でなければなりません。name: ")
             .extracting("userMessage")

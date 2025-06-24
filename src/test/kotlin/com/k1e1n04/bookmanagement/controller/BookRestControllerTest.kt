@@ -38,6 +38,13 @@ class BookRestControllerTest {
 
     private lateinit var objectMapper: ObjectMapper
 
+    companion object {
+        private val BOOK_ID_1: UUID = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
+        private val BOOK_ID_2: UUID = UUID.fromString("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb")
+        private val AUTHOR_ID_1: UUID = UUID.fromString("cccccccc-cccc-cccc-cccc-cccccccccccc")
+        private val AUTHOR_ID_2: UUID = UUID.fromString("dddddddd-dddd-dddd-dddd-dddddddddddd")
+    }
+
     @BeforeEach
     fun setUp() {
         objectMapper = ObjectMapper().registerModule(JavaTimeModule())
@@ -45,21 +52,19 @@ class BookRestControllerTest {
 
     @Test
     fun `GET books should return all books`() {
-        val bookId1 = UUID.randomUUID().toString()
-        val bookId2 = UUID.randomUUID().toString()
         val response = listOf(
             BookResponse(
-                id = bookId1,
+                id = BOOK_ID_1.toString(),
                 title = "書籍1",
                 price = 1500,
-                authorIds = listOf(UUID.randomUUID().toString()),
+                authorIds = listOf(AUTHOR_ID_1.toString()),
                 status = "PUBLISHED"
             ),
             BookResponse(
-                id = bookId2,
+                id = BOOK_ID_2.toString(),
                 title = "書籍2",
                 price = 2000,
-                authorIds = listOf(UUID.randomUUID().toString()),
+                authorIds = listOf(AUTHOR_ID_2.toString()),
                 status = "UNPUBLISHED"
             )
         )
@@ -68,12 +73,12 @@ class BookRestControllerTest {
         mockMvc.perform(get("/api/books"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$").isArray)
-            .andExpect(jsonPath("$[0].id").value(bookId1))
+            .andExpect(jsonPath("$[0].id").value(BOOK_ID_1.toString()))
             .andExpect(jsonPath("$[0].title").value("書籍1"))
             .andExpect(jsonPath("$[0].price").value(1500))
             .andExpect(jsonPath("$[0].authorIds").isArray)
             .andExpect(jsonPath("$[0].status").value("PUBLISHED"))
-            .andExpect(jsonPath("$[1].id").value(bookId2))
+            .andExpect(jsonPath("$[1].id").value(BOOK_ID_2.toString()))
             .andExpect(jsonPath("$[1].title").value("書籍2"))
             .andExpect(jsonPath("$[1].price").value(2000))
             .andExpect(jsonPath("$[1].authorIds").isArray)
@@ -82,14 +87,12 @@ class BookRestControllerTest {
 
     @Test
     fun `POST books should create new book`() {
-        val authorId1 = UUID.randomUUID().toString()
-        val authorId2 = UUID.randomUUID().toString()
         val request = BookRegisterRequest(
             title = "新しい書籍",
             price = 1000,
             authorIds = listOf(
-                authorId1,
-                authorId2
+                AUTHOR_ID_1.toString(),
+                AUTHOR_ID_2.toString()
             ),
             status = PublicationStatusRequest.UNPUBLISHED
         )
@@ -99,8 +102,8 @@ class BookRestControllerTest {
             title = "新しい書籍",
             price = 1000,
             authorIds = listOf(
-                authorId1,
-                authorId2
+                AUTHOR_ID_1.toString(),
+                AUTHOR_ID_2.toString()
             ),
             status = "UNPUBLISHED"
         )
@@ -142,7 +145,7 @@ class BookRestControllerTest {
         val request = BookUpdateRequest(
             title = "更新された書籍",
             price = 1200,
-            authorIds = listOf(UUID.randomUUID().toString()),
+            authorIds = listOf(AUTHOR_ID_1.toString()),
             status = PublicationStatusRequest.PUBLISHED
         )
 
@@ -150,7 +153,7 @@ class BookRestControllerTest {
             id = bookId,
             title = "更新された書籍",
             price = 1200,
-            authorIds = listOf(UUID.randomUUID().toString()),
+            authorIds = listOf(AUTHOR_ID_1.toString()),
             status = "PUBLISHED"
         )
 
@@ -170,7 +173,6 @@ class BookRestControllerTest {
 
     @Test
     fun `PUT books should return 400 Bad Request for invalid input`() {
-        val bookId = UUID.randomUUID().toString()
         val request = BookUpdateRequest(
             title = "",
             price = -100,
@@ -179,7 +181,7 @@ class BookRestControllerTest {
         )
 
         mockMvc.perform(
-            put("/api/books/$bookId")
+            put("/api/books/${BOOK_ID_1.toString()}")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(request))
         )
@@ -188,29 +190,28 @@ class BookRestControllerTest {
 
     @Test
     fun `GET by authorId should return books by author`() {
-        val authorId = UUID.randomUUID().toString()
         val response = listOf(
             BookResponse(
-                id = UUID.randomUUID().toString(),
+                id = BOOK_ID_1.toString(),
                 title = "著者の書籍1",
                 price = 1500,
-                authorIds = listOf(authorId),
+                authorIds = listOf(AUTHOR_ID_1.toString()),
                 status = "PUBLISHED"
             ),
             BookResponse(
-                id = UUID.randomUUID().toString(),
+                id = BOOK_ID_2.toString(),
                 title = "著者の書籍2",
                 price = 2000,
-                authorIds = listOf(authorId),
+                authorIds = listOf(AUTHOR_ID_2.toString()),
                 status = "UNPUBLISHED"
             )
         )
 
-        every { bookService.getBooksByAuthor(authorId) } returns response
-        mockMvc.perform(get("/api/books/author/$authorId"))
+        every { bookService.getBooksByAuthor(AUTHOR_ID_1.toString()) } returns response
+        mockMvc.perform(get("/api/books/author/$AUTHOR_ID_1"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$").isArray)
-            .andExpect(jsonPath("$[0].authorIds[0]").value(authorId))
-            .andExpect(jsonPath("$[1].authorIds[0]").value(authorId))
+            .andExpect(jsonPath("$[0].authorIds[0]").value(AUTHOR_ID_1.toString()))
+            .andExpect(jsonPath("$[1].authorIds[0]").value(AUTHOR_ID_2.toString()))
     }
 }

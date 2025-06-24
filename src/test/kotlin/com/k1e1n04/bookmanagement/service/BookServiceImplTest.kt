@@ -36,27 +36,29 @@ class BookServiceImplTest {
     @InjectMockKs
     private lateinit var bookService: BookServiceImpl
 
+    companion object {
+        private val BOOK_ID_1: UUID = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
+        private val BOOK_ID_2: UUID = UUID.fromString("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb")
+        private val AUTHOR_ID_1: UUID = UUID.fromString("cccccccc-cccc-cccc-cccc-cccccccccccc")
+        private val AUTHOR_ID_2: UUID = UUID.fromString("dddddddd-dddd-dddd-dddd-dddddddddddd")
+        private val AUTHOR_ID_3: UUID = UUID.fromString("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee")
+    }
+
     @Test
     fun `test getAllBooks`() {
-        val bookId1 = UUID.randomUUID()
-        val bookId2 = UUID.randomUUID()
-        val authorId1 = UUID.randomUUID()
-        val authorId2 = UUID.randomUUID()
-        val authorId3 = UUID.randomUUID()
-
         val expected = listOf(
             BookResponse(
-                id = bookId1.toString(),
+                id = BOOK_ID_1.toString(),
                 title = "Book 1",
                 price = 1000,
-                authorIds = listOf(authorId1.toString(), authorId2.toString()),
+                authorIds = listOf(AUTHOR_ID_1.toString(), AUTHOR_ID_2.toString()),
                 status = PublicationStatus.PUBLISHED.name
             ),
             BookResponse(
-                id = bookId2.toString(),
+                id = BOOK_ID_2.toString(),
                 title = "Book 2",
                 price = 1500,
-                authorIds = listOf(authorId3.toString()),
+                authorIds = listOf(AUTHOR_ID_3.toString()),
                 status = PublicationStatus.UNPUBLISHED.name
             )
         )
@@ -65,17 +67,17 @@ class BookServiceImplTest {
             bookRepository.findAll()
         } returns listOf(
             BookEntity(
-                id = bookId1,
+                id = BOOK_ID_1,
                 title = "Book 1",
                 price = 1000,
-                authorIds = listOf(authorId1, authorId2),
+                authorIds = listOf(AUTHOR_ID_1, AUTHOR_ID_2),
                 status = PublicationStatus.PUBLISHED
             ),
             BookEntity(
-                id = bookId2,
+                id = BOOK_ID_2,
                 title = "Book 2",
                 price = 1500,
-                authorIds = listOf(authorId3),
+                authorIds = listOf(AUTHOR_ID_3),
                 status = PublicationStatus.UNPUBLISHED
             )
         )
@@ -95,69 +97,61 @@ class BookServiceImplTest {
 
     @Test
     fun `test getBookByAuthor`() {
-        val authorId = UUID.randomUUID()
-        val bookId1 = UUID.randomUUID()
-        val bookId2 = UUID.randomUUID()
-
         val expected = listOf(
             BookResponse(
-                id = bookId1.toString(),
+                id = BOOK_ID_1.toString(),
                 title = "Book by Author",
                 price = 1200,
-                authorIds = listOf(authorId.toString()),
+                authorIds = listOf(AUTHOR_ID_1.toString()),
                 status = PublicationStatus.PUBLISHED.name
             ),
             BookResponse(
-                id = bookId2.toString(),
+                id = BOOK_ID_2.toString(),
                 title = "Another Book by Author",
                 price = 900,
-                authorIds = listOf(authorId.toString()),
+                authorIds = listOf(AUTHOR_ID_1.toString()),
                 status = PublicationStatus.UNPUBLISHED.name
             )
         )
 
         every {
-            bookRepository.findByAuthorId(authorId)
+            bookRepository.findByAuthorId(AUTHOR_ID_1)
         } returns listOf(
             BookEntity(
-                id = bookId1,
+                id = BOOK_ID_1,
                 title = "Book by Author",
                 price = 1200,
-                authorIds = listOf(authorId),
+                authorIds = listOf(AUTHOR_ID_1),
                 status = PublicationStatus.PUBLISHED
             ),
             BookEntity(
-                id = bookId2,
+                id = BOOK_ID_2,
                 title = "Another Book by Author",
                 price = 900,
-                authorIds = listOf(authorId),
+                authorIds = listOf(AUTHOR_ID_1),
                 status = PublicationStatus.UNPUBLISHED
             )
         )
 
-        val actual = bookService.getBooksByAuthor(authorId.toString())
+        val actual = bookService.getBooksByAuthor(AUTHOR_ID_1.toString())
         assert(actual.size == 2)
         assert(actual.containsAll(expected))
     }
 
     @Test
     fun `test getBookByAuthor with empty list`() {
-        val authorId = UUID.randomUUID()
-        every { bookRepository.findByAuthorId(authorId) } returns emptyList()
+        every { bookRepository.findByAuthorId(AUTHOR_ID_1) } returns emptyList()
 
-        val actual = bookService.getBooksByAuthor(authorId.toString())
+        val actual = bookService.getBooksByAuthor(AUTHOR_ID_1.toString())
         assert(actual.isEmpty())
     }
 
     @Test
     fun `test registerBook`() {
-        val authorId1 = UUID.randomUUID()
-        val authorId2 = UUID.randomUUID()
-
         val request = BookRegisterRequest(
             title = "New Book",
             price = 2000,
-            authorIds = listOf(authorId1.toString(), authorId2.toString()),
+            authorIds = listOf(AUTHOR_ID_1.toString(), AUTHOR_ID_2.toString()),
             status = PublicationStatusRequest.UNPUBLISHED
         )
 
@@ -165,12 +159,12 @@ class BookServiceImplTest {
             authorRepository.findByIds(any())
         } returns listOf(
             AuthorEntity(
-                id = authorId1,
+                id = AUTHOR_ID_1,
                 name = "Author 1",
                 dateOfBirth = LocalDate.of(1980, 1, 1)
             ),
             AuthorEntity(
-                id = authorId2,
+                id = AUTHOR_ID_2,
                 name = "Author 2",
                 dateOfBirth = LocalDate.of(1990, 5, 20)
             )
@@ -207,13 +201,10 @@ class BookServiceImplTest {
 
     @Test
     fun `test registerBook with non-existing authors`() {
-        val authorId1 = UUID.randomUUID()
-        val authorId2 = UUID.randomUUID()
-
         val request = BookRegisterRequest(
             title = "Non-existing Authors Book",
             price = 2500,
-            authorIds = listOf(authorId1.toString(), authorId2.toString()),
+            authorIds = listOf(AUTHOR_ID_1.toString(), AUTHOR_ID_2.toString()),
             status = PublicationStatusRequest.UNPUBLISHED
         )
 
@@ -224,30 +215,26 @@ class BookServiceImplTest {
         assertThatThrownBy {
             bookService.registerBook(request)
         }.isInstanceOf(DomainValidationException::class.java)
-            .hasMessageContaining("著者ID: ${authorId1}, $authorId2 の一部が存在しません。")
+            .hasMessageContaining("著者ID: ${AUTHOR_ID_1.toString()}, ${AUTHOR_ID_2.toString()} の一部が存在しません。")
             .hasFieldOrPropertyWithValue("userMessage", "指定された著者の一部が存在しません。")
     }
 
     @Test
     fun `test updateBook`() {
-        val bookId = UUID.randomUUID()
-        val authorId1 = UUID.randomUUID()
-        val authorId2 = UUID.randomUUID()
-
         val existingBook = BookEntity(
-            id = bookId,
+            id = BOOK_ID_1,
             title = "Existing Book",
             price = 3000,
-            authorIds = listOf(authorId1, authorId2),
+            authorIds = listOf(AUTHOR_ID_1, AUTHOR_ID_2),
             status = PublicationStatus.PUBLISHED
         )
 
-        every { bookRepository.findById(bookId) } returns existingBook
+        every { bookRepository.findById(BOOK_ID_1) } returns existingBook
 
         val request = BookUpdateRequest(
             title = "Updated Book",
             price = 3500,
-            authorIds = listOf(authorId1.toString(), authorId2.toString()),
+            authorIds = listOf(AUTHOR_ID_1.toString(), AUTHOR_ID_2.toString()),
             status = PublicationStatusRequest.PUBLISHED
         )
 
@@ -255,12 +242,12 @@ class BookServiceImplTest {
             authorRepository.findByIds(any())
         } returns listOf(
             AuthorEntity(
-                id = authorId1,
+                id = AUTHOR_ID_1,
                 name = "Author 1",
                 dateOfBirth = LocalDate.of(1980, 1, 1)
             ),
             AuthorEntity(
-                id = authorId2,
+                id = AUTHOR_ID_2,
                 name = "Author 2",
                 dateOfBirth = LocalDate.of(1990, 5, 20)
             )
@@ -270,7 +257,7 @@ class BookServiceImplTest {
             it.invocation.args[0] as BookEntity
         }
 
-        val actual = bookService.updateBook(bookId.toString(), request)
+        val actual = bookService.updateBook(BOOK_ID_1.toString(), request)
         assert(actual.title == request.title)
         assert(actual.price == request.price)
         assert(actual.authorIds.size == request.authorIds.size)
@@ -296,7 +283,6 @@ class BookServiceImplTest {
 
     @Test
     fun `test updateBook with non-existing book`() {
-        val bookId = UUID.randomUUID()
         val request = BookUpdateRequest(
             title = "Non-existing Book",
             price = 4000,
@@ -304,18 +290,17 @@ class BookServiceImplTest {
             status = PublicationStatusRequest.UNPUBLISHED
         )
 
-        every { bookRepository.findById(bookId) } returns null
+        every { bookRepository.findById(BOOK_ID_1) } returns null
 
         assertThatThrownBy {
-            bookService.updateBook(bookId.toString(), request)
+            bookService.updateBook(BOOK_ID_1.toString(), request)
         }.isInstanceOf(NotFoundException::class.java)
-            .hasMessageContaining("書籍ID: $bookId は存在しません。")
+            .hasMessageContaining("書籍ID: $BOOK_ID_1 は存在しません。")
             .hasFieldOrPropertyWithValue("userMessage", "指定された書籍は存在しません。")
     }
 
     @Test
     fun `test updateBook with invalid author IDs`() {
-        val bookId = UUID.randomUUID()
         val request = BookUpdateRequest(
             title = "Invalid Author IDs Book",
             price = 4500,
@@ -323,8 +308,8 @@ class BookServiceImplTest {
             status = PublicationStatusRequest.UNPUBLISHED
         )
 
-        every { bookRepository.findById(bookId) } returns BookEntity(
-            id = bookId,
+        every { bookRepository.findById(BOOK_ID_1) } returns BookEntity(
+            id = BOOK_ID_1,
             title = "Existing Book",
             price = 3000,
             authorIds = listOf(UUID.randomUUID()),
@@ -332,7 +317,7 @@ class BookServiceImplTest {
         )
 
         assertThatThrownBy {
-            bookService.updateBook(bookId.toString(), request)
+            bookService.updateBook(BOOK_ID_1.toString(), request)
         }.isInstanceOf(DomainValidationException::class.java)
             .hasMessageContaining("著者IDの形式が不正です。")
             .hasFieldOrPropertyWithValue("userMessage", "著者IDの形式が不正です。")
@@ -340,22 +325,18 @@ class BookServiceImplTest {
 
     @Test
     fun `test updateBook with non-existing authors`() {
-        val bookId = UUID.randomUUID()
-        val authorId1 = UUID.randomUUID()
-        val authorId2 = UUID.randomUUID()
-
         val request = BookUpdateRequest(
             title = "Non-existing Authors Update",
             price = 5000,
-            authorIds = listOf(authorId1.toString(), authorId2.toString()),
+            authorIds = listOf(AUTHOR_ID_1.toString(), AUTHOR_ID_2.toString()),
             status = PublicationStatusRequest.UNPUBLISHED
         )
 
-        every { bookRepository.findById(bookId) } returns BookEntity(
-            id = bookId,
+        every { bookRepository.findById(BOOK_ID_1) } returns BookEntity(
+            id = BOOK_ID_1,
             title = "Existing Book",
             price = 3000,
-            authorIds = listOf(UUID.randomUUID()),
+            authorIds = listOf(AUTHOR_ID_1),
             status = PublicationStatus.PUBLISHED
         )
 
@@ -364,52 +345,48 @@ class BookServiceImplTest {
         } returns emptyList()
 
         assertThatThrownBy {
-            bookService.updateBook(bookId.toString(), request)
+            bookService.updateBook(BOOK_ID_1.toString(), request)
         }.isInstanceOf(DomainValidationException::class.java)
-            .hasMessageContaining("著者ID: ${authorId1}, $authorId2 の一部が存在しません。")
+            .hasMessageContaining("著者ID: ${AUTHOR_ID_1.toString()}, ${AUTHOR_ID_2.toString()} の一部が存在しません。")
             .hasFieldOrPropertyWithValue("userMessage", "指定された著者の一部が存在しません。")
     }
 
     @Test
     fun `test updateBook throws DomainValidationException when trying to unpublish a published book`() {
-        val bookId = UUID.randomUUID()
-        val authorId1 = UUID.randomUUID()
-        val authorId2 = UUID.randomUUID()
-
         val existingBook = BookEntity(
-            id = bookId,
+            id = BOOK_ID_1,
             title = "Published Book",
             price = 3000,
-            authorIds = listOf(authorId1, authorId2),
+            authorIds = listOf(AUTHOR_ID_1, AUTHOR_ID_2),
             status = PublicationStatus.PUBLISHED
         )
 
         every { authorRepository.findByIds(any()) } returns listOf(
             AuthorEntity(
-                id = authorId1,
+                id = AUTHOR_ID_1,
                 name = "Author 1",
                 dateOfBirth = LocalDate.of(1980, 1, 1)
             ),
             AuthorEntity(
-                id = authorId2,
+                id = AUTHOR_ID_2,
                 name = "Author 2",
                 dateOfBirth = LocalDate.of(1990, 5, 20)
             )
         )
 
-        every { bookRepository.findById(bookId) } returns existingBook
+        every { bookRepository.findById(BOOK_ID_1) } returns existingBook
 
         val request = BookUpdateRequest(
             title = "Trying to Unpublish",
             price = 3500,
-            authorIds = listOf(authorId1.toString(), authorId2.toString()),
+            authorIds = listOf(AUTHOR_ID_1.toString(), AUTHOR_ID_2.toString()),
             status = PublicationStatusRequest.UNPUBLISHED
         )
 
         assertThatThrownBy {
-            bookService.updateBook(bookId.toString(), request)
+            bookService.updateBook(BOOK_ID_1.toString(), request)
         }.isInstanceOf(DomainValidationException::class.java)
-            .hasMessageContaining("出版済みの書籍を非公開にしようとしました。id: $bookId")
+            .hasMessageContaining("出版済みの書籍を非公開にしようとしました。id: $BOOK_ID_1")
             .hasFieldOrPropertyWithValue("userMessage", "出版済みの書籍を非公開にすることはできません。")
     }
 

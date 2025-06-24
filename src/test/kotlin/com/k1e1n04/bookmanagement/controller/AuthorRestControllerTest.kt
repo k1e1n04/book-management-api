@@ -52,7 +52,7 @@ class AuthorRestControllerTest {
         )
 
         val response = AuthorResponse(
-            id = UUID.randomUUID().toString(),
+            id = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").toString(),
             name = "新しい著者",
             dateOfBirth = "1990-01-01"
         )
@@ -94,7 +94,7 @@ class AuthorRestControllerTest {
 
     @Test
     fun `PUT authors should update existing author`() {
-        val authorId = UUID.randomUUID().toString()
+        val authorId = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").toString()
         val request = AuthorUpdateRequest(
             name = "更新された著者",
             dateOfBirth = LocalDate.of(1985, 5, 20)
@@ -123,7 +123,7 @@ class AuthorRestControllerTest {
 
     @Test
     fun `PUT authors should return 400 Bad Request for invalid input`() {
-        val authorId = UUID.randomUUID().toString()
+        val authorId = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").toString()
         val request = AuthorUpdateRequest(
             name = "",
             dateOfBirth = LocalDate.now().plusYears(1)
