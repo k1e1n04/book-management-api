@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: 'postgres:latest'
+    image: 'postgres:17-alpine'
     environment:
       - 'POSTGRES_DB=book_management'
       - 'POSTGRES_PASSWORD=password'
