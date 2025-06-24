@@ -45,8 +45,6 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("org.testcontainers:junit-jupiter:1.21.2")
     testImplementation("org.testcontainers:postgresql:1.21.2")
-    testImplementation("io.mockk:mockk:1.14.4")
-    testImplementation("com.ninja-squad:springmockk:4.0.2")
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
 
     // jOOQ
