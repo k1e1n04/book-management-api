@@ -4,7 +4,7 @@ plugins {
     id("org.springframework.boot") version "3.5.0"
     id("io.spring.dependency-management") version "1.1.7"
     id("org.jooq.jooq-codegen-gradle") version "3.19.23"
-    id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
+    id("org.jlleitschuh.gradle.ktlint") version "12.3.0"
 }
 
 group = "com.k1e1n04"
@@ -33,7 +33,7 @@ dependencies {
     // Database
     implementation("org.flywaydb:flyway-core")
     implementation("org.flywaydb:flyway-database-postgresql")
-    runtimeOnly("org.postgresql:postgresql:42.7.3")
+    runtimeOnly("org.postgresql:postgresql:42.7.7")
 
     // Docker Compose
     developmentOnly("org.springframework.boot:spring-boot-docker-compose")
@@ -43,13 +43,13 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
-    testImplementation("org.testcontainers:junit-jupiter:1.20.3")
-    testImplementation("org.testcontainers:postgresql:1.20.3")
-    testImplementation("io.mockk:mockk:1.13.7")
+    testImplementation("org.testcontainers:junit-jupiter:1.21.2")
+    testImplementation("org.testcontainers:postgresql:1.21.2")
+    testImplementation("io.mockk:mockk:1.14.4")
     testImplementation("com.ninja-squad:springmockk:4.0.2")
 
     // jOOQ
-    jooqCodegen("org.postgresql:postgresql:42.7.3")
+    jooqCodegen("org.postgresql:postgresql:42.7.7")
 }
 
 kotlin {
