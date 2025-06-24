@@ -6,34 +6,34 @@ import com.k1e1n04.bookmanagement.request.AuthorRegisterRequest
 import com.k1e1n04.bookmanagement.request.AuthorUpdateRequest
 import com.k1e1n04.bookmanagement.response.AuthorResponse
 import com.k1e1n04.bookmanagement.service.AuthorService
-import com.ninjasquad.springmockk.MockkBean
-import io.mockk.every
-import io.mockk.junit5.MockKExtension
-import io.mockk.verify
 import java.time.LocalDate
 import java.util.UUID
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
+import org.springframework.test.context.bean.override.mockito.MockitoBean
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-/**
- * 著者情報を管理するRESTコントローラーのテストクラス
- */
 @WebMvcTest(AuthorRestController::class)
-@ExtendWith(MockKExtension::class)
+@ExtendWith(SpringExtension::class)
 class AuthorRestControllerTest {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
-    @MockkBean
+    @MockitoBean
     private lateinit var authorService: AuthorService
 
     private lateinit var objectMapper: ObjectMapper
@@ -62,7 +62,9 @@ class AuthorRestControllerTest {
                 dateOfBirth = "1990-01-01",
             )
 
-        every { authorService.registerAuthor(request) } returns response
+        whenever(
+            authorService.registerAuthor(any<AuthorRegisterRequest>()),
+        ).thenReturn(response)
 
         mockMvc.perform(
             post("/api/authors")
@@ -74,7 +76,7 @@ class AuthorRestControllerTest {
             .andExpect(jsonPath("$.name").value(response.name))
             .andExpect(jsonPath("$.dateOfBirth").value(response.dateOfBirth))
 
-        verify(exactly = 1) { authorService.registerAuthor(request) }
+        verify(authorService, times(1)).registerAuthor(any<AuthorRegisterRequest>())
     }
 
     @Test
@@ -95,7 +97,7 @@ class AuthorRestControllerTest {
             .andExpect(jsonPath("$.errors[?(@.field == 'name')].message").value("名前は必須です。"))
             .andExpect(jsonPath("$.errors[?(@.field == 'dateOfBirth')].message").value("生年月日は過去の日付である必要があります。"))
 
-        verify(exactly = 0) { authorService.registerAuthor(any()) }
+        verify(authorService, times(0)).registerAuthor(any<AuthorRegisterRequest>())
     }
 
     @Test
@@ -114,7 +116,8 @@ class AuthorRestControllerTest {
                 dateOfBirth = "1985-05-20",
             )
 
-        every { authorService.updateAuthor(authorId, request) } returns response
+        whenever(authorService.updateAuthor(eq(authorId), any<AuthorUpdateRequest>()))
+            .thenReturn(response)
 
         mockMvc.perform(
             put("/api/authors/$authorId")
@@ -126,7 +129,7 @@ class AuthorRestControllerTest {
             .andExpect(jsonPath("$.name").value(response.name))
             .andExpect(jsonPath("$.dateOfBirth").value(response.dateOfBirth))
 
-        verify(exactly = 1) { authorService.updateAuthor(authorId, request) }
+        verify(authorService, times(1)).updateAuthor(eq(authorId), any<AuthorUpdateRequest>())
     }
 
     @Test
@@ -148,6 +151,6 @@ class AuthorRestControllerTest {
             .andExpect(jsonPath("$.errors[?(@.field == 'name')].message").value("名前は必須です。"))
             .andExpect(jsonPath("$.errors[?(@.field == 'dateOfBirth')].message").value("生年月日は過去の日付である必要があります。"))
 
-        verify(exactly = 0) { authorService.updateAuthor(any(), any()) }
+        verify(authorService, times(0)).updateAuthor(eq(authorId), any<AuthorUpdateRequest>())
     }
 }

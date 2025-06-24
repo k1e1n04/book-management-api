@@ -7,26 +7,27 @@ import com.k1e1n04.bookmanagement.repository.AuthorRepository
 import com.k1e1n04.bookmanagement.request.AuthorRegisterRequest
 import com.k1e1n04.bookmanagement.request.AuthorUpdateRequest
 import com.k1e1n04.bookmanagement.response.AuthorResponse
-import io.mockk.every
-import io.mockk.impl.annotations.InjectMockKs
-import io.mockk.impl.annotations.MockK
-import io.mockk.junit5.MockKExtension
 import java.time.LocalDate
 import java.util.UUID
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.InjectMocks
+import org.mockito.Mock
+import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.any
+import org.mockito.kotlin.whenever
 
 /**
  * 著者サービスのテストクラス
  */
-@ExtendWith(MockKExtension::class)
+@ExtendWith(MockitoExtension::class)
 class AuthorServiceImplTest {
-    @MockK
+    @Mock
     private lateinit var authorRepository: AuthorRepository
 
-    @InjectMockKs
+    @InjectMocks
     private lateinit var authorService: AuthorServiceImpl
 
     companion object {
@@ -50,9 +51,7 @@ class AuthorServiceImplTest {
                 ),
             )
 
-        every {
-            authorRepository.findAll()
-        } returns
+        whenever(authorRepository.findAll()).thenReturn(
             listOf(
                 AuthorEntity(
                     id = AUTHOR_ID_1,
@@ -64,7 +63,8 @@ class AuthorServiceImplTest {
                     name = "Author 2",
                     dateOfBirth = LocalDate.of(1985, 5, 20),
                 ),
-            )
+            ),
+        )
 
         val actual = authorService.getAllAuthors()
 
@@ -74,7 +74,7 @@ class AuthorServiceImplTest {
 
     @Test
     fun `test getAllAuthors with empty list`() {
-        every { authorRepository.findAll() } returns emptyList()
+        whenever(authorRepository.findAll()).thenReturn(emptyList())
 
         val actual = authorService.getAllAuthors()
 
@@ -89,8 +89,8 @@ class AuthorServiceImplTest {
                 dateOfBirth = LocalDate.of(1990, 1, 1),
             )
 
-        every { authorRepository.save(any()) } answers {
-            it.invocation.args[0] as AuthorEntity
+        whenever(authorRepository.save(any())).thenAnswer {
+            it.arguments[0] as AuthorEntity
         }
 
         val actual = authorService.registerAuthor(request)
@@ -122,14 +122,15 @@ class AuthorServiceImplTest {
                 dateOfBirth = LocalDate.of(1990, 1, 1),
             )
 
-        every { authorRepository.findById(AUTHOR_ID_1) } returns
+        whenever(authorRepository.findById(AUTHOR_ID_1)).thenReturn(
             AuthorEntity(
                 id = AUTHOR_ID_1,
                 name = "Old Author",
                 dateOfBirth = LocalDate.of(1985, 5, 20),
-            )
-        every { authorRepository.update(any()) } answers {
-            it.invocation.args[0] as AuthorEntity
+            ),
+        )
+        whenever(authorRepository.update(any())).thenAnswer {
+            it.arguments[0] as AuthorEntity
         }
 
         val actual = authorService.updateAuthor(AUTHOR_ID_1.toString(), request)
@@ -147,11 +148,11 @@ class AuthorServiceImplTest {
                 dateOfBirth = LocalDate.of(1990, 1, 1),
             )
 
-        every { authorRepository.findById(AUTHOR_ID_1) } returns null
+        whenever(authorRepository.findById(AUTHOR_ID_1)).thenReturn(null)
 
         assertThatThrownBy { authorService.updateAuthor(AUTHOR_ID_1.toString(), request) }
             .isInstanceOf(NotFoundException::class.java)
-            .hasMessage("著者ID: ${AUTHOR_ID_1} は存在しません")
+            .hasMessage("著者ID: $AUTHOR_ID_1 は存在しません")
             .extracting("userMessage")
             .isEqualTo("指定された著者は存在しません")
     }
@@ -180,12 +181,13 @@ class AuthorServiceImplTest {
                 dateOfBirth = LocalDate.of(1990, 1, 1),
             )
 
-        every { authorRepository.findById(AUTHOR_ID_1) } returns
+        whenever(authorRepository.findById(AUTHOR_ID_1)).thenReturn(
             AuthorEntity(
                 id = AUTHOR_ID_1,
                 name = "Old Author",
                 dateOfBirth = LocalDate.of(1985, 5, 20),
-            )
+            ),
+        )
 
         assertThatThrownBy { authorService.updateAuthor(AUTHOR_ID_1.toString(), request) }
             .isInstanceOf(DomainValidationException::class.java)

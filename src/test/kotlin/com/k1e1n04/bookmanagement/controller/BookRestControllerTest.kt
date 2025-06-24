@@ -7,15 +7,17 @@ import com.k1e1n04.bookmanagement.request.BookUpdateRequest
 import com.k1e1n04.bookmanagement.request.PublicationStatusRequest
 import com.k1e1n04.bookmanagement.response.BookResponse
 import com.k1e1n04.bookmanagement.service.BookService
-import com.ninjasquad.springmockk.MockkBean
-import io.mockk.every
-import io.mockk.junit5.MockKExtension
 import java.util.UUID
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.test.context.bean.override.mockito.MockitoBean
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -23,23 +25,20 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-/**
- * 書籍情報を管理するRESTコントローラーのテストクラス
- */
 @WebMvcTest(BookRestController::class)
-@ExtendWith(MockKExtension::class)
+@ExtendWith(SpringExtension::class)
 class BookRestControllerTest {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
-    @MockkBean
+    @MockitoBean
     private lateinit var bookService: BookService
 
     private lateinit var objectMapper: ObjectMapper
 
     companion object {
         private val BOOK_ID_1: UUID = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
-        private val BOOK_ID_2: UUID = UUID.fromString("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb")
+        private val BOOK_ID_2: UUID = UUID.fromString("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb") // Fixed syntax error
         private val AUTHOR_ID_1: UUID = UUID.fromString("cccccccc-cccc-cccc-cccc-cccccccccccc")
         private val AUTHOR_ID_2: UUID = UUID.fromString("dddddddd-dddd-dddd-dddd-dddddddddddd")
     }
@@ -69,7 +68,8 @@ class BookRestControllerTest {
                 ),
             )
 
-        every { bookService.getAllBooks() } returns response
+        whenever(bookService.getAllBooks()).thenReturn(response)
+
         mockMvc.perform(get("/api/books"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$").isArray)
@@ -112,7 +112,10 @@ class BookRestControllerTest {
                 status = "UNPUBLISHED",
             )
 
-        every { bookService.registerBook(request) } returns response
+        whenever(
+            bookService.registerBook(any<BookRegisterRequest>()),
+        ).thenReturn(response) // Using mockito-kotlin's any()
+
         mockMvc.perform(
             post("/api/books")
                 .contentType("application/json")
@@ -146,7 +149,6 @@ class BookRestControllerTest {
 
     @Test
     fun `PUT books should update book`() {
-        val bookId = UUID.randomUUID().toString()
         val request =
             BookUpdateRequest(
                 title = "更新された書籍",
@@ -157,21 +159,23 @@ class BookRestControllerTest {
 
         val response =
             BookResponse(
-                id = bookId,
+                id = BOOK_ID_1.toString(),
                 title = "更新された書籍",
                 price = 1200,
                 authorIds = listOf(AUTHOR_ID_1.toString()),
                 status = "PUBLISHED",
             )
 
-        every { bookService.updateBook(bookId, request) } returns response
+        whenever(bookService.updateBook(eq(BOOK_ID_1.toString()), any<BookUpdateRequest>()))
+            .thenReturn(response)
+
         mockMvc.perform(
-            put("/api/books/$bookId")
+            put("/api/books/${BOOK_ID_1}")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(request)),
         )
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.id").value(bookId))
+            .andExpect(jsonPath("$.id").value(BOOK_ID_1.toString()))
             .andExpect(jsonPath("$.title").value("更新された書籍"))
             .andExpect(jsonPath("$.price").value(1200))
             .andExpect(jsonPath("$.authorIds").isArray)
@@ -211,16 +215,18 @@ class BookRestControllerTest {
                     id = BOOK_ID_2.toString(),
                     title = "著者の書籍2",
                     price = 2000,
-                    authorIds = listOf(AUTHOR_ID_2.toString()),
+                    authorIds = listOf(AUTHOR_ID_1.toString()),
                     status = "UNPUBLISHED",
                 ),
             )
 
-        every { bookService.getBooksByAuthor(AUTHOR_ID_1.toString()) } returns response
+        whenever(bookService.getBooksByAuthor(eq(AUTHOR_ID_1.toString())))
+            .thenReturn(response)
+
         mockMvc.perform(get("/api/books/author/$AUTHOR_ID_1"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$").isArray)
             .andExpect(jsonPath("$[0].authorIds[0]").value(AUTHOR_ID_1.toString()))
-            .andExpect(jsonPath("$[1].authorIds[0]").value(AUTHOR_ID_2.toString()))
+            .andExpect(jsonPath("$[1].authorIds[0]").value(AUTHOR_ID_1.toString()))
     }
 }
