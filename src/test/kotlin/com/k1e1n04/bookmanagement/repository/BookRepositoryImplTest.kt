@@ -3,6 +3,7 @@ package com.k1e1n04.bookmanagement.repository
 import com.k1e1n04.bookmanagement.exception.NotFoundException
 import com.k1e1n04.bookmanagement.model.BookEntity
 import com.k1e1n04.bookmanagement.model.PublicationStatus
+import java.util.UUID
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.jooq.DSLContext
@@ -11,14 +12,12 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.test.context.jdbc.Sql
-import java.util.UUID
 
 /**
  * 書籍リポジトリのテストクラス
  */
 @RepositoryTest
 class BookRepositoryImplTest {
-
     @Autowired
     private lateinit var dslContext: DSLContext
 
@@ -52,15 +51,15 @@ class BookRepositoryImplTest {
                 title = "吾輩は猫である",
                 price = 1200,
                 status = PublicationStatus.UNPUBLISHED,
-                authorIds = listOf(AUTHOR_ID_1, AUTHOR_ID_2)
+                authorIds = listOf(AUTHOR_ID_1, AUTHOR_ID_2),
             ),
             BookEntity(
                 id = BOOK_ID_2,
                 title = "羅生門",
                 price = 900,
                 status = PublicationStatus.PUBLISHED,
-                authorIds = listOf(AUTHOR_ID_2)
-            )
+                authorIds = listOf(AUTHOR_ID_2),
+            ),
         )
     }
 
@@ -82,8 +81,8 @@ class BookRepositoryImplTest {
                 title = "吾輩は猫である",
                 price = 1200,
                 status = PublicationStatus.UNPUBLISHED,
-                authorIds = listOf(AUTHOR_ID_1, AUTHOR_ID_2)
-            )
+                authorIds = listOf(AUTHOR_ID_1, AUTHOR_ID_2),
+            ),
         )
     }
 
@@ -97,13 +96,14 @@ class BookRepositoryImplTest {
     @Sql("/data/insert_authors.sql")
     @Sql("/data/insert_books.sql")
     fun `save stores new book and returns it`() {
-        val newBook = BookEntity(
-            id = UUID.randomUUID(),
-            title = "新しい書籍",
-            price = 1500,
-            status = PublicationStatus.PUBLISHED,
-            authorIds = listOf(AUTHOR_ID_1)
-        )
+        val newBook =
+            BookEntity(
+                id = UUID.randomUUID(),
+                title = "新しい書籍",
+                price = 1500,
+                status = PublicationStatus.PUBLISHED,
+                authorIds = listOf(AUTHOR_ID_1),
+            )
 
         val savedBook = bookRepository.save(newBook)
 
@@ -118,13 +118,14 @@ class BookRepositoryImplTest {
     @Sql("/data/insert_authors.sql")
     fun `save allows maximum 255 characters for title`() {
         val validTitle = "a".repeat(255)
-        val newBook = BookEntity(
-            id = UUID.randomUUID(),
-            title = validTitle,
-            price = 1000,
-            status = PublicationStatus.UNPUBLISHED,
-            authorIds = listOf(AUTHOR_ID_1)
-        )
+        val newBook =
+            BookEntity(
+                id = UUID.randomUUID(),
+                title = validTitle,
+                price = 1000,
+                status = PublicationStatus.UNPUBLISHED,
+                authorIds = listOf(AUTHOR_ID_1),
+            )
 
         val savedBook = bookRepository.save(newBook)
 
@@ -139,13 +140,14 @@ class BookRepositoryImplTest {
     @Sql("/data/insert_authors.sql")
     fun `save allows maximum 255 characters for title with multi-byte characters`() {
         val multiByteTitle = "あ".repeat(255)
-        val newBook = BookEntity(
-            id = UUID.randomUUID(),
-            title = multiByteTitle,
-            price = 1000,
-            status = PublicationStatus.UNPUBLISHED,
-            authorIds = listOf(AUTHOR_ID_1)
-        )
+        val newBook =
+            BookEntity(
+                id = UUID.randomUUID(),
+                title = multiByteTitle,
+                price = 1000,
+                status = PublicationStatus.UNPUBLISHED,
+                authorIds = listOf(AUTHOR_ID_1),
+            )
 
         val savedBook = bookRepository.save(newBook)
 
@@ -160,13 +162,14 @@ class BookRepositoryImplTest {
     @Sql("/data/insert_authors.sql")
     fun `save allows maximum price`() {
         val maxPrice = Int.MAX_VALUE
-        val newBook = BookEntity(
-            id = UUID.randomUUID(),
-            title = "高価格の書籍",
-            price = maxPrice,
-            status = PublicationStatus.UNPUBLISHED,
-            authorIds = listOf(AUTHOR_ID_1)
-        )
+        val newBook =
+            BookEntity(
+                id = UUID.randomUUID(),
+                title = "高価格の書籍",
+                price = maxPrice,
+                status = PublicationStatus.UNPUBLISHED,
+                authorIds = listOf(AUTHOR_ID_1),
+            )
 
         val savedBook = bookRepository.save(newBook)
 
@@ -179,17 +182,19 @@ class BookRepositoryImplTest {
 
     @Test
     fun `save throws DataIntegrityViolationException when book has non-existing author IDs`() {
-        val invalidAuthorIds = listOf(
-            NON_EXISTENT_AUTHOR_ID_1,
-            NON_EXISTENT_AUTHOR_ID_2
-        )
-        val newBook = BookEntity(
-            id = UUID.randomUUID(),
-            title = "無効な著者IDの書籍",
-            price = 1000,
-            status = PublicationStatus.UNPUBLISHED,
-            authorIds = invalidAuthorIds
-        )
+        val invalidAuthorIds =
+            listOf(
+                NON_EXISTENT_AUTHOR_ID_1,
+                NON_EXISTENT_AUTHOR_ID_2,
+            )
+        val newBook =
+            BookEntity(
+                id = UUID.randomUUID(),
+                title = "無効な著者IDの書籍",
+                price = 1000,
+                status = PublicationStatus.UNPUBLISHED,
+                authorIds = invalidAuthorIds,
+            )
 
         assertThatThrownBy { bookRepository.save(newBook) }
             .isInstanceOf(DataIntegrityViolationException::class.java)
@@ -201,12 +206,13 @@ class BookRepositoryImplTest {
     fun `update modifies existing book and returns it`() {
         val existingBook = bookRepository.findById(BOOK_ID_1)
         assertThat(existingBook).isNotNull
-        val updatedBook = existingBook!!.update(
-            title = "更新された書籍",
-            price = 1300,
-            authorIds = listOf(AUTHOR_ID_1.toString(), AUTHOR_ID_2.toString()),
-            status = PublicationStatus.PUBLISHED
-        )
+        val updatedBook =
+            existingBook!!.update(
+                title = "更新された書籍",
+                price = 1300,
+                authorIds = listOf(AUTHOR_ID_1.toString(), AUTHOR_ID_2.toString()),
+                status = PublicationStatus.PUBLISHED,
+            )
         val savedBook = bookRepository.update(updatedBook)
         assertThat(savedBook).isEqualTo(updatedBook)
         val foundBook = bookRepository.findById(savedBook.id)
@@ -218,13 +224,14 @@ class BookRepositoryImplTest {
     @Sql("/data/insert_authors.sql")
     @Sql("/data/insert_books.sql")
     fun `update throws NotFoundException when book does not exist`() {
-        val nonExistentBook = BookEntity(
-            id = NON_EXISTENT_BOOK_ID_1,
-            title = "存在しない書籍",
-            price = 1000,
-            status = PublicationStatus.UNPUBLISHED,
-            authorIds = listOf(AUTHOR_ID_1)
-        )
+        val nonExistentBook =
+            BookEntity(
+                id = NON_EXISTENT_BOOK_ID_1,
+                title = "存在しない書籍",
+                price = 1000,
+                status = PublicationStatus.UNPUBLISHED,
+                authorIds = listOf(AUTHOR_ID_1),
+            )
 
         assertThatThrownBy { bookRepository.update(nonExistentBook) }
             .isInstanceOf(NotFoundException::class.java)
@@ -239,12 +246,13 @@ class BookRepositoryImplTest {
     fun `update throws DataIntegrityViolationException when book has non-existing author IDs`() {
         val existingBook = bookRepository.findById(BOOK_ID_1)
         assertThat(existingBook).isNotNull
-        val updatedBook = existingBook!!.update(
-            title = "更新された書籍",
-            price = 1300,
-            authorIds = listOf(NON_EXISTENT_AUTHOR_ID_1.toString(), NON_EXISTENT_AUTHOR_ID_2.toString()),
-            status = PublicationStatus.PUBLISHED
-        )
+        val updatedBook =
+            existingBook!!.update(
+                title = "更新された書籍",
+                price = 1300,
+                authorIds = listOf(NON_EXISTENT_AUTHOR_ID_1.toString(), NON_EXISTENT_AUTHOR_ID_2.toString()),
+                status = PublicationStatus.PUBLISHED,
+            )
 
         assertThatThrownBy { bookRepository.update(updatedBook) }
             .isInstanceOf(DataIntegrityViolationException::class.java)
@@ -262,8 +270,8 @@ class BookRepositoryImplTest {
                 title = "吾輩は猫である",
                 price = 1200,
                 status = PublicationStatus.UNPUBLISHED,
-                authorIds = listOf(AUTHOR_ID_1, AUTHOR_ID_2)
-            )
+                authorIds = listOf(AUTHOR_ID_1, AUTHOR_ID_2),
+            ),
         )
     }
 

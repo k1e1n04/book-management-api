@@ -59,7 +59,7 @@ class BookServiceImpl(
     @Transactional
     override fun updateBook(
         id: String,
-        book: BookUpdateRequest
+        book: BookUpdateRequest,
     ): BookResponse {
         val bookId =
             try {

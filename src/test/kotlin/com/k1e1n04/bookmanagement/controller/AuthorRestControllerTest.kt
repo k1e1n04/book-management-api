@@ -8,8 +8,8 @@ import com.k1e1n04.bookmanagement.response.AuthorResponse
 import com.k1e1n04.bookmanagement.service.AuthorService
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
-import io.mockk.verify
 import io.mockk.junit5.MockKExtension
+import io.mockk.verify
 import java.time.LocalDate
 import java.util.UUID
 import org.junit.jupiter.api.BeforeEach
@@ -30,7 +30,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @WebMvcTest(AuthorRestController::class)
 @ExtendWith(MockKExtension::class)
 class AuthorRestControllerTest {
-
     @Autowired
     private lateinit var mockMvc: MockMvc
 
@@ -46,23 +45,25 @@ class AuthorRestControllerTest {
 
     @Test
     fun `POST authors should create new author`() {
-        val request = AuthorRegisterRequest(
-            name = "新しい著者",
-            dateOfBirth = LocalDate.of(1990, 1, 1)
-        )
+        val request =
+            AuthorRegisterRequest(
+                name = "新しい著者",
+                dateOfBirth = LocalDate.of(1990, 1, 1),
+            )
 
-        val response = AuthorResponse(
-            id = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").toString(),
-            name = "新しい著者",
-            dateOfBirth = "1990-01-01"
-        )
+        val response =
+            AuthorResponse(
+                id = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").toString(),
+                name = "新しい著者",
+                dateOfBirth = "1990-01-01",
+            )
 
         every { authorService.registerAuthor(request) } returns response
 
         mockMvc.perform(
             post("/api/authors")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request))
+                .content(objectMapper.writeValueAsString(request)),
         )
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.id").value(response.id))
@@ -74,15 +75,16 @@ class AuthorRestControllerTest {
 
     @Test
     fun `POST authors should return 400 Bad Request for invalid input`() {
-        val request = AuthorRegisterRequest(
-            name = "",
-            dateOfBirth = LocalDate.now().plusYears(1)
-        )
+        val request =
+            AuthorRegisterRequest(
+                name = "",
+                dateOfBirth = LocalDate.now().plusYears(1),
+            )
 
         mockMvc.perform(
             post("/api/authors")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request))
+                .content(objectMapper.writeValueAsString(request)),
         )
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.errors.length()").value(2))
@@ -95,23 +97,25 @@ class AuthorRestControllerTest {
     @Test
     fun `PUT authors should update existing author`() {
         val authorId = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").toString()
-        val request = AuthorUpdateRequest(
-            name = "更新された著者",
-            dateOfBirth = LocalDate.of(1985, 5, 20)
-        )
+        val request =
+            AuthorUpdateRequest(
+                name = "更新された著者",
+                dateOfBirth = LocalDate.of(1985, 5, 20),
+            )
 
-        val response = AuthorResponse(
-            id = authorId,
-            name = "更新された著者",
-            dateOfBirth = "1985-05-20"
-        )
+        val response =
+            AuthorResponse(
+                id = authorId,
+                name = "更新された著者",
+                dateOfBirth = "1985-05-20",
+            )
 
         every { authorService.updateAuthor(authorId, request) } returns response
 
         mockMvc.perform(
             put("/api/authors/$authorId")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request))
+                .content(objectMapper.writeValueAsString(request)),
         )
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id").value(response.id))
@@ -124,15 +128,16 @@ class AuthorRestControllerTest {
     @Test
     fun `PUT authors should return 400 Bad Request for invalid input`() {
         val authorId = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").toString()
-        val request = AuthorUpdateRequest(
-            name = "",
-            dateOfBirth = LocalDate.now().plusYears(1)
-        )
+        val request =
+            AuthorUpdateRequest(
+                name = "",
+                dateOfBirth = LocalDate.now().plusYears(1),
+            )
 
         mockMvc.perform(
             put("/api/authors/$authorId")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request))
+                .content(objectMapper.writeValueAsString(request)),
         )
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.errors.length()").value(2))

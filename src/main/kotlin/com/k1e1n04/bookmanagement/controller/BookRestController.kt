@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/books")
 class BookRestController(
-    private val bookService: BookService
+    private val bookService: BookService,
 ) {
     /**
      * すべての書籍情報を取得
@@ -38,7 +38,7 @@ class BookRestController(
      */
     @GetMapping("/author/{authorId}")
     fun getBooksByAuthor(
-        @PathVariable authorId: String
+        @PathVariable authorId: String,
     ) = bookService.getBooksByAuthor(authorId)
 
     /**
@@ -50,7 +50,7 @@ class BookRestController(
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun registerBook(
-        @Valid @RequestBody book: BookRegisterRequest
+        @Valid @RequestBody book: BookRegisterRequest,
     ) = bookService.registerBook(book)
 
     /**
@@ -62,9 +62,9 @@ class BookRestController(
     @PutMapping("/{id}")
     fun updateBook(
         @PathVariable id: String,
-        @Valid @RequestBody book: BookUpdateRequest
+        @Valid @RequestBody book: BookUpdateRequest,
     ) = bookService.updateBook(
         id = id,
-        book = book
+        book = book,
     )
 }

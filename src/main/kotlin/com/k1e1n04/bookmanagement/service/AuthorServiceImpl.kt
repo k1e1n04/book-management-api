@@ -29,7 +29,10 @@ class AuthorServiceImpl(
             ).let(authorRepository::save)
             .let(::toResponse)
 
-    override fun    updateAuthor(id: String, author: AuthorUpdateRequest): AuthorResponse {
+    override fun updateAuthor(
+        id: String,
+        author: AuthorUpdateRequest,
+    ): AuthorResponse {
         val authorId =
             try {
                 UUID.fromString(id)

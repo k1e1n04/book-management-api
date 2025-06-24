@@ -3,8 +3,6 @@ package com.k1e1n04.bookmanagement.repository
 import com.k1e1n04.bookmanagement.config.TestcontainersConfiguration
 import org.springframework.boot.test.autoconfigure.jooq.JooqTest
 import org.springframework.context.annotation.Import
-import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.TestPropertySource
 import org.springframework.transaction.annotation.Transactional
 
 /**

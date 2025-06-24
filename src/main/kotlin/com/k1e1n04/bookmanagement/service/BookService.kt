@@ -38,5 +38,8 @@ interface BookService {
      * @param book 更新する書籍の情報
      * @return 更新された書籍の情報
      */
-    fun updateBook(id: String, book: BookUpdateRequest): BookResponse
+    fun updateBook(
+        id: String,
+        book: BookUpdateRequest,
+    ): BookResponse
 }

@@ -16,7 +16,6 @@ data class AuthorEntity(
     val name: String,
     val dateOfBirth: LocalDate,
 ) {
-
     init {
         require(name.isNotBlank() && name.length <= 255) {
             throw DomainValidationException(
@@ -31,7 +30,6 @@ data class AuthorEntity(
             )
         }
     }
-
 
     companion object {
         /**

@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/authors")
 class AuthorRestController(
-    private val authorService: AuthorService
+    private val authorService: AuthorService,
 ) {
     /**
      * すべての著者情報を取得
@@ -36,10 +36,10 @@ class AuthorRestController(
      * @param author 登録する著者の情報
      * @return 登録された著者の情報
      */
-     @PostMapping
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun registerAuthor(
-        @RequestBody @Valid author: AuthorRegisterRequest
+        @RequestBody @Valid author: AuthorRegisterRequest,
     ) = authorService.registerAuthor(author)
 
     /**
@@ -51,10 +51,9 @@ class AuthorRestController(
     @PutMapping("/{id}")
     fun updateAuthor(
         @PathVariable id: String,
-        @RequestBody @Valid author: AuthorUpdateRequest
-        ) =
-        authorService.updateAuthor(
-            id = id,
-            author = author
-        )
+        @RequestBody @Valid author: AuthorUpdateRequest,
+    ) = authorService.updateAuthor(
+        id = id,
+        author = author,
+    )
 }

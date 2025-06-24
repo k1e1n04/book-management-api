@@ -30,5 +30,8 @@ interface AuthorService {
      * @param author 更新する著者の情報
      * @return 更新された著者の情報
      */
-    fun updateAuthor(id: String, author: AuthorUpdateRequest): AuthorResponse
+    fun updateAuthor(
+        id: String,
+        author: AuthorUpdateRequest,
+    ): AuthorResponse
 }

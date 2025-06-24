@@ -13,30 +13,29 @@ data class BookEntity(
     val authorIds: List<UUID>,
     val status: PublicationStatus,
 ) {
-
     init {
         require(title.isNotBlank() && title.length <= 255) {
             throw DomainValidationException(
                 message = "書籍のタイトルは1文字以上、255文字以下でなければなりません。title: $title",
-                userMessage = "書籍のタイトルは1文字以上、255文字以下でなければなりません。"
+                userMessage = "書籍のタイトルは1文字以上、255文字以下でなければなりません。",
             )
         }
         require(price >= 0) {
             throw DomainValidationException(
                 message = "書籍の価格は0以上でなければなりません。price: $price",
-                userMessage = "書籍の価格は0以上でなければなりません。"
+                userMessage = "書籍の価格は0以上でなければなりません。",
             )
         }
         require(authorIds.isNotEmpty()) {
             throw DomainValidationException(
                 message = "書籍には少なくとも1人の著者が必要です。",
-                userMessage = "書籍には少なくとも1人の著者が必要です。"
+                userMessage = "書籍には少なくとも1人の著者が必要です。",
             )
         }
         require(authorIds.distinct().size == authorIds.size) {
             throw DomainValidationException(
                 message = "書籍の著者IDは重複してはいけません。authorIds: ${authorIds.joinToString(", ")}",
-                userMessage = "書籍の著者IDは重複してはいけません。"
+                userMessage = "書籍の著者IDは重複してはいけません。",
             )
         }
     }
@@ -100,7 +99,7 @@ data class BookEntity(
         if (this.status == PublicationStatus.PUBLISHED && status == PublicationStatus.UNPUBLISHED) {
             throw DomainValidationException(
                 message = "出版済みの書籍を非公開にしようとしました。id: $id",
-                userMessage = "出版済みの書籍を非公開にすることはできません。"
+                userMessage = "出版済みの書籍を非公開にすることはできません。",
             )
         }
         return this.copy(

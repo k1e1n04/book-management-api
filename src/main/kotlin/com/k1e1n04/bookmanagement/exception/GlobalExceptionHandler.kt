@@ -26,17 +26,19 @@ class GlobalExceptionHandler {
      */
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleValidationException(ex: MethodArgumentNotValidException): ResponseEntity<ErrorResponse> {
-        val errors = ex.bindingResult.fieldErrors.map { error ->
-            ValidationError(
-                field = error.field,
-                message = error.defaultMessage ?: "バリデーションエラーが発生しました。"
-            )
-        }
+        val errors =
+            ex.bindingResult.fieldErrors.map { error ->
+                ValidationError(
+                    field = error.field,
+                    message = error.defaultMessage ?: "バリデーションエラーが発生しました。",
+                )
+            }
 
-        val errorResponse = ErrorResponse(
-            message = "入力値にエラーがあります。",
-            errors = errors
-        )
+        val errorResponse =
+            ErrorResponse(
+                message = "入力値にエラーがあります。",
+                errors = errors,
+            )
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse)
     }
@@ -48,7 +50,9 @@ class GlobalExceptionHandler {
      * @return エラーレスポンス
      */
     @ExceptionHandler(HttpMessageNotReadableException::class)
-    fun handleHttpMessageNotReadableException(ex: HttpMessageNotReadableException): ResponseEntity<Map<String, String?>> {
+    fun handleHttpMessageNotReadableException(
+        ex: HttpMessageNotReadableException,
+    ): ResponseEntity<Map<String, String?>> {
         logger.warn("リクエストの読み取りに失敗しました: ${ex.message}", ex)
         val body =
             mapOf(
@@ -96,11 +100,14 @@ class GlobalExceptionHandler {
      * @return エラーレスポンス
      */
     @ExceptionHandler(HttpRequestMethodNotSupportedException::class)
-    fun handleHttpRequestMethodNotSupportedException(ex: HttpRequestMethodNotSupportedException): ResponseEntity<Map<String, String?>> {
+    fun handleHttpRequestMethodNotSupportedException(
+        ex: HttpRequestMethodNotSupportedException,
+    ): ResponseEntity<Map<String, String?>> {
         logger.warn("許可されていないHTTPメソッド: ${ex.method}", ex)
-        val body = mapOf(
-            "message" to "許可されていないHTTPメソッドです。"
-        )
+        val body =
+            mapOf(
+                "message" to "許可されていないHTTPメソッドです。",
+            )
         return ResponseEntity(body, HttpStatus.METHOD_NOT_ALLOWED)
     }
 
@@ -127,7 +134,9 @@ class GlobalExceptionHandler {
      * @return エラーレスポンス
      */
     @ExceptionHandler(HttpMediaTypeNotSupportedException::class)
-    fun handleHttpMediaTypeNotSupportedException(ex: HttpMediaTypeNotSupportedException): ResponseEntity<Map<String, String?>> {
+    fun handleHttpMediaTypeNotSupportedException(
+        ex: HttpMediaTypeNotSupportedException,
+    ): ResponseEntity<Map<String, String?>> {
         logger.warn("サポートされていないメディアタイプ: ${ex.contentType}", ex)
         val body =
             mapOf(
@@ -173,7 +182,7 @@ class GlobalExceptionHandler {
      */
     data class ErrorResponse(
         val message: String,
-        val errors: List<ValidationError>
+        val errors: List<ValidationError>,
     )
 
     /**
@@ -181,6 +190,6 @@ class GlobalExceptionHandler {
      */
     data class ValidationError(
         val field: String,
-        val message: String
+        val message: String,
     )
 }

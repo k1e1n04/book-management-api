@@ -19,7 +19,6 @@ import org.springframework.test.context.jdbc.Sql
  */
 @RepositoryTest
 class AuthorRepositoryImplTest {
-
     @Autowired
     private lateinit var dslContext: DSLContext
 
@@ -46,13 +45,13 @@ class AuthorRepositoryImplTest {
             AuthorEntity(
                 id = AUTHOR_ID_1,
                 name = "夏目漱石",
-                dateOfBirth = LocalDate.of(1867, 2, 9)
+                dateOfBirth = LocalDate.of(1867, 2, 9),
             ),
             AuthorEntity(
                 id = AUTHOR_ID_2,
                 name = "芥川龍之介",
-                dateOfBirth = LocalDate.of(1892, 3, 1)
-            )
+                dateOfBirth = LocalDate.of(1892, 3, 1),
+            ),
         )
     }
 
@@ -65,10 +64,11 @@ class AuthorRepositoryImplTest {
     @Test
     @Sql("/data/insert_authors.sql")
     fun `save creates and returns a new author`() {
-        val newAuthor = AuthorEntity.new(
-            name = "新しい著者",
-            dateOfBirth = LocalDate.of(1990, 1, 1)
-        )
+        val newAuthor =
+            AuthorEntity.new(
+                name = "新しい著者",
+                dateOfBirth = LocalDate.of(1990, 1, 1),
+            )
 
         val savedAuthor = authorRepository.save(newAuthor)
 
@@ -85,10 +85,11 @@ class AuthorRepositoryImplTest {
     @Test
     fun `save allows maximum length name`() {
         val maxLengthName = "a".repeat(255)
-        val newAuthor = AuthorEntity.new(
-            name = maxLengthName,
-            dateOfBirth = LocalDate.of(1990, 1, 1)
-        )
+        val newAuthor =
+            AuthorEntity.new(
+                name = maxLengthName,
+                dateOfBirth = LocalDate.of(1990, 1, 1),
+            )
 
         val savedAuthor = authorRepository.save(newAuthor)
 
@@ -98,10 +99,11 @@ class AuthorRepositoryImplTest {
     @Test
     fun `save allows maximum length name with multibyte characters`() {
         val maxLengthName = "あ".repeat(255)
-        val newAuthor = AuthorEntity.new(
-            name = maxLengthName,
-            dateOfBirth = LocalDate.of(1990, 1, 1)
-        )
+        val newAuthor =
+            AuthorEntity.new(
+                name = maxLengthName,
+                dateOfBirth = LocalDate.of(1990, 1, 1),
+            )
 
         val savedAuthor = authorRepository.save(newAuthor)
 
@@ -111,11 +113,12 @@ class AuthorRepositoryImplTest {
     @Test
     @Sql("/data/insert_authors.sql")
     fun `save throws DuplicateKeyException when saving author with existing ID`() {
-        val existingAuthor = AuthorEntity(
-            id = AUTHOR_ID_1,
-            name = "夏目漱石",
-            dateOfBirth = LocalDate.of(1867, 2, 9)
-        )
+        val existingAuthor =
+            AuthorEntity(
+                id = AUTHOR_ID_1,
+                name = "夏目漱石",
+                dateOfBirth = LocalDate.of(1867, 2, 9),
+            )
 
         assertThatThrownBy { authorRepository.save(existingAuthor) }
             .isInstanceOf(DuplicateKeyException::class.java)
@@ -130,10 +133,10 @@ class AuthorRepositoryImplTest {
             .usingRecursiveComparison()
             .isEqualTo(
                 AuthorEntity(
-                    id =AUTHOR_ID_1,
+                    id = AUTHOR_ID_1,
                     name = "夏目漱石",
-                    dateOfBirth = LocalDate.of(1867, 2, 9)
-                )
+                    dateOfBirth = LocalDate.of(1867, 2, 9),
+                ),
             )
     }
 
@@ -149,10 +152,11 @@ class AuthorRepositoryImplTest {
     fun `update modifies and returns existing author`() {
         val authorToUpdate = authorRepository.findById(AUTHOR_ID_1)!! // nullチェックはテストのために簡略化
         val updatedName = "更新された夏目漱石"
-        val updatedAuthor = authorToUpdate.update(
-            name = updatedName,
-            dateOfBirth = LocalDate.of(1867, 2, 9)
-        )
+        val updatedAuthor =
+            authorToUpdate.update(
+                name = updatedName,
+                dateOfBirth = LocalDate.of(1867, 2, 9),
+            )
 
         val result = assertDoesNotThrow { authorRepository.update(updatedAuthor) }
 
@@ -170,10 +174,11 @@ class AuthorRepositoryImplTest {
     fun `update allows maximum length name`() {
         val authorToUpdate = authorRepository.findById(AUTHOR_ID_1)!!
         val maxLengthName = "a".repeat(255)
-        val updatedAuthor = authorToUpdate.update(
-            name = maxLengthName,
-            dateOfBirth = LocalDate.of(1867, 2, 9)
-        )
+        val updatedAuthor =
+            authorToUpdate.update(
+                name = maxLengthName,
+                dateOfBirth = LocalDate.of(1867, 2, 9),
+            )
 
         val result = assertDoesNotThrow { authorRepository.update(updatedAuthor) }
 
@@ -185,10 +190,11 @@ class AuthorRepositoryImplTest {
     fun `update allows maximum length name with multibyte characters`() {
         val authorToUpdate = authorRepository.findById(AUTHOR_ID_1)!!
         val maxLengthName = "あ".repeat(255)
-        val updatedAuthor = authorToUpdate.update(
-            name = maxLengthName,
-            dateOfBirth = LocalDate.of(1867, 2, 9)
-        )
+        val updatedAuthor =
+            authorToUpdate.update(
+                name = maxLengthName,
+                dateOfBirth = LocalDate.of(1867, 2, 9),
+            )
 
         val result = assertDoesNotThrow { authorRepository.update(updatedAuthor) }
 
@@ -198,11 +204,12 @@ class AuthorRepositoryImplTest {
     @Test
     @Sql("/data/insert_authors.sql")
     fun `update throws NotFoundException when author does not exist`() {
-        val nonExistentAuthor = AuthorEntity(
-            id = NON_EXISTENT_AUTHOR_ID_1,
-            name = "存在しない著者",
-            dateOfBirth = LocalDate.of(2000, 1, 1)
-        )
+        val nonExistentAuthor =
+            AuthorEntity(
+                id = NON_EXISTENT_AUTHOR_ID_1,
+                name = "存在しない著者",
+                dateOfBirth = LocalDate.of(2000, 1, 1),
+            )
 
         assertThatThrownBy { authorRepository.update(nonExistentAuthor) }
             .isInstanceOf(NotFoundException::class.java)
@@ -220,15 +227,15 @@ class AuthorRepositoryImplTest {
         assertThat(authors).hasSize(2)
         assertThat(authors).containsExactlyInAnyOrder(
             AuthorEntity(
-                id =AUTHOR_ID_1,
-                name ="夏目漱石",
-                dateOfBirth = LocalDate.of(1867, 2, 9)
+                id = AUTHOR_ID_1,
+                name = "夏目漱石",
+                dateOfBirth = LocalDate.of(1867, 2, 9),
             ),
             AuthorEntity(
-                id =AUTHOR_ID_2,
+                id = AUTHOR_ID_2,
                 name = "芥川龍之介",
-                dateOfBirth = LocalDate.of(1892, 3, 1)
-            )
+                dateOfBirth = LocalDate.of(1892, 3, 1),
+            ),
         )
     }
 
@@ -243,8 +250,8 @@ class AuthorRepositoryImplTest {
             AuthorEntity(
                 id = AUTHOR_ID_1,
                 name = "夏目漱石",
-                dateOfBirth = LocalDate.of(1867, 2, 9)
-            )
+                dateOfBirth = LocalDate.of(1867, 2, 9),
+            ),
         )
     }
 

@@ -29,7 +29,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @WebMvcTest(BookRestController::class)
 @ExtendWith(MockKExtension::class)
 class BookRestControllerTest {
-
     @Autowired
     private lateinit var mockMvc: MockMvc
 
@@ -52,22 +51,23 @@ class BookRestControllerTest {
 
     @Test
     fun `GET books should return all books`() {
-        val response = listOf(
-            BookResponse(
-                id = BOOK_ID_1.toString(),
-                title = "書籍1",
-                price = 1500,
-                authorIds = listOf(AUTHOR_ID_1.toString()),
-                status = "PUBLISHED"
-            ),
-            BookResponse(
-                id = BOOK_ID_2.toString(),
-                title = "書籍2",
-                price = 2000,
-                authorIds = listOf(AUTHOR_ID_2.toString()),
-                status = "UNPUBLISHED"
+        val response =
+            listOf(
+                BookResponse(
+                    id = BOOK_ID_1.toString(),
+                    title = "書籍1",
+                    price = 1500,
+                    authorIds = listOf(AUTHOR_ID_1.toString()),
+                    status = "PUBLISHED",
+                ),
+                BookResponse(
+                    id = BOOK_ID_2.toString(),
+                    title = "書籍2",
+                    price = 2000,
+                    authorIds = listOf(AUTHOR_ID_2.toString()),
+                    status = "UNPUBLISHED",
+                ),
             )
-        )
 
         every { bookService.getAllBooks() } returns response
         mockMvc.perform(get("/api/books"))
@@ -87,32 +87,36 @@ class BookRestControllerTest {
 
     @Test
     fun `POST books should create new book`() {
-        val request = BookRegisterRequest(
-            title = "新しい書籍",
-            price = 1000,
-            authorIds = listOf(
-                AUTHOR_ID_1.toString(),
-                AUTHOR_ID_2.toString()
-            ),
-            status = PublicationStatusRequest.UNPUBLISHED
-        )
+        val request =
+            BookRegisterRequest(
+                title = "新しい書籍",
+                price = 1000,
+                authorIds =
+                    listOf(
+                        AUTHOR_ID_1.toString(),
+                        AUTHOR_ID_2.toString(),
+                    ),
+                status = PublicationStatusRequest.UNPUBLISHED,
+            )
 
-        val response = BookResponse(
-            id = UUID.randomUUID().toString(),
-            title = "新しい書籍",
-            price = 1000,
-            authorIds = listOf(
-                AUTHOR_ID_1.toString(),
-                AUTHOR_ID_2.toString()
-            ),
-            status = "UNPUBLISHED"
-        )
+        val response =
+            BookResponse(
+                id = UUID.randomUUID().toString(),
+                title = "新しい書籍",
+                price = 1000,
+                authorIds =
+                    listOf(
+                        AUTHOR_ID_1.toString(),
+                        AUTHOR_ID_2.toString(),
+                    ),
+                status = "UNPUBLISHED",
+            )
 
         every { bookService.registerBook(request) } returns response
         mockMvc.perform(
             post("/api/books")
                 .contentType("application/json")
-                .content(objectMapper.writeValueAsString(request))
+                .content(objectMapper.writeValueAsString(request)),
         )
             .andExpect(status().isCreated)
             .andExpect(jsonPath("$.id").isNotEmpty)
@@ -124,17 +128,18 @@ class BookRestControllerTest {
 
     @Test
     fun `POST books should return 400 Bad Request for invalid input`() {
-        val request = BookRegisterRequest(
-            title = "",
-            price = -100,
-            authorIds = emptyList(),
-            status = PublicationStatusRequest.UNPUBLISHED
-        )
+        val request =
+            BookRegisterRequest(
+                title = "",
+                price = -100,
+                authorIds = emptyList(),
+                status = PublicationStatusRequest.UNPUBLISHED,
+            )
 
         mockMvc.perform(
             post("/api/books")
                 .contentType("application/json")
-                .content(objectMapper.writeValueAsString(request))
+                .content(objectMapper.writeValueAsString(request)),
         )
             .andExpect(status().isBadRequest)
     }
@@ -142,26 +147,28 @@ class BookRestControllerTest {
     @Test
     fun `PUT books should update book`() {
         val bookId = UUID.randomUUID().toString()
-        val request = BookUpdateRequest(
-            title = "更新された書籍",
-            price = 1200,
-            authorIds = listOf(AUTHOR_ID_1.toString()),
-            status = PublicationStatusRequest.PUBLISHED
-        )
+        val request =
+            BookUpdateRequest(
+                title = "更新された書籍",
+                price = 1200,
+                authorIds = listOf(AUTHOR_ID_1.toString()),
+                status = PublicationStatusRequest.PUBLISHED,
+            )
 
-        val response = BookResponse(
-            id = bookId,
-            title = "更新された書籍",
-            price = 1200,
-            authorIds = listOf(AUTHOR_ID_1.toString()),
-            status = "PUBLISHED"
-        )
+        val response =
+            BookResponse(
+                id = bookId,
+                title = "更新された書籍",
+                price = 1200,
+                authorIds = listOf(AUTHOR_ID_1.toString()),
+                status = "PUBLISHED",
+            )
 
         every { bookService.updateBook(bookId, request) } returns response
         mockMvc.perform(
             put("/api/books/$bookId")
                 .contentType("application/json")
-                .content(objectMapper.writeValueAsString(request))
+                .content(objectMapper.writeValueAsString(request)),
         )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(bookId))
@@ -173,39 +180,41 @@ class BookRestControllerTest {
 
     @Test
     fun `PUT books should return 400 Bad Request for invalid input`() {
-        val request = BookUpdateRequest(
-            title = "",
-            price = -100,
-            authorIds = emptyList(),
-            status = PublicationStatusRequest.UNPUBLISHED
-        )
+        val request =
+            BookUpdateRequest(
+                title = "",
+                price = -100,
+                authorIds = emptyList(),
+                status = PublicationStatusRequest.UNPUBLISHED,
+            )
 
         mockMvc.perform(
-            put("/api/books/${BOOK_ID_1.toString()}")
+            put("/api/books/${BOOK_ID_1}")
                 .contentType("application/json")
-                .content(objectMapper.writeValueAsString(request))
+                .content(objectMapper.writeValueAsString(request)),
         )
             .andExpect(status().isBadRequest)
     }
 
     @Test
     fun `GET by authorId should return books by author`() {
-        val response = listOf(
-            BookResponse(
-                id = BOOK_ID_1.toString(),
-                title = "著者の書籍1",
-                price = 1500,
-                authorIds = listOf(AUTHOR_ID_1.toString()),
-                status = "PUBLISHED"
-            ),
-            BookResponse(
-                id = BOOK_ID_2.toString(),
-                title = "著者の書籍2",
-                price = 2000,
-                authorIds = listOf(AUTHOR_ID_2.toString()),
-                status = "UNPUBLISHED"
+        val response =
+            listOf(
+                BookResponse(
+                    id = BOOK_ID_1.toString(),
+                    title = "著者の書籍1",
+                    price = 1500,
+                    authorIds = listOf(AUTHOR_ID_1.toString()),
+                    status = "PUBLISHED",
+                ),
+                BookResponse(
+                    id = BOOK_ID_2.toString(),
+                    title = "著者の書籍2",
+                    price = 2000,
+                    authorIds = listOf(AUTHOR_ID_2.toString()),
+                    status = "UNPUBLISHED",
+                ),
             )
-        )
 
         every { bookService.getBooksByAuthor(AUTHOR_ID_1.toString()) } returns response
         mockMvc.perform(get("/api/books/author/$AUTHOR_ID_1"))

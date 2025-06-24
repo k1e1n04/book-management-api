@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test
  * 著者エンティティのテストクラス
  */
 class AuthorEntityTest {
-
     @Test
     fun `new returns a new instance`() {
         val name = "Test Author"
@@ -45,11 +44,12 @@ class AuthorEntityTest {
         val name = ""
         val dateOfBirth = LocalDate.of(1990, 1, 1)
 
-        val exception = org.junit.jupiter.api.Assertions.assertThrows(
-            DomainValidationException::class.java
-        ) {
-            AuthorEntity.new(name, dateOfBirth)
-        }
+        val exception =
+            org.junit.jupiter.api.Assertions.assertThrows(
+                DomainValidationException::class.java,
+            ) {
+                AuthorEntity.new(name, dateOfBirth)
+            }
 
         assertThat(exception.userMessage).isEqualTo("名前は1文字以上、255文字以下でなければなりません。")
     }
@@ -59,11 +59,12 @@ class AuthorEntityTest {
         val name = "a".repeat(256)
         val dateOfBirth = LocalDate.of(1990, 1, 1)
 
-        val exception = org.junit.jupiter.api.Assertions.assertThrows(
-            DomainValidationException::class.java
-        ) {
-            AuthorEntity.new(name, dateOfBirth)
-        }
+        val exception =
+            org.junit.jupiter.api.Assertions.assertThrows(
+                DomainValidationException::class.java,
+            ) {
+                AuthorEntity.new(name, dateOfBirth)
+            }
 
         assertThat(exception.userMessage).isEqualTo("名前は1文字以上、255文字以下でなければなりません。")
     }
@@ -73,11 +74,12 @@ class AuthorEntityTest {
         val name = "Test Author"
         val dateOfBirth = LocalDate.now().plusDays(1)
 
-        val exception = org.junit.jupiter.api.Assertions.assertThrows(
-            DomainValidationException::class.java
-        ) {
-            AuthorEntity.new(name, dateOfBirth)
-        }
+        val exception =
+            org.junit.jupiter.api.Assertions.assertThrows(
+                DomainValidationException::class.java,
+            ) {
+                AuthorEntity.new(name, dateOfBirth)
+            }
 
         assertThat(exception.userMessage).isEqualTo("生年月日は過去の日付である必要があります。")
     }
@@ -122,11 +124,12 @@ class AuthorEntityTest {
         val updatedName = ""
         val updatedDateOfBirth = LocalDate.of(1995, 5, 5)
 
-        val exception = org.junit.jupiter.api.Assertions.assertThrows(
-            DomainValidationException::class.java
-        ) {
-            originalAuthor.update(updatedName, updatedDateOfBirth)
-        }
+        val exception =
+            org.junit.jupiter.api.Assertions.assertThrows(
+                DomainValidationException::class.java,
+            ) {
+                originalAuthor.update(updatedName, updatedDateOfBirth)
+            }
 
         assertThat(exception.userMessage).isEqualTo("名前は1文字以上、255文字以下でなければなりません。")
     }
@@ -137,11 +140,12 @@ class AuthorEntityTest {
         val updatedName = "a".repeat(256)
         val updatedDateOfBirth = LocalDate.of(1995, 5, 5)
 
-        val exception = org.junit.jupiter.api.Assertions.assertThrows(
-            DomainValidationException::class.java
-        ) {
-            originalAuthor.update(updatedName, updatedDateOfBirth)
-        }
+        val exception =
+            org.junit.jupiter.api.Assertions.assertThrows(
+                DomainValidationException::class.java,
+            ) {
+                originalAuthor.update(updatedName, updatedDateOfBirth)
+            }
 
         assertThat(exception.userMessage).isEqualTo("名前は1文字以上、255文字以下でなければなりません。")
     }
@@ -152,11 +156,12 @@ class AuthorEntityTest {
         val updatedName = "Updated Author"
         val updatedDateOfBirth = LocalDate.now().plusDays(1)
 
-        val exception = org.junit.jupiter.api.Assertions.assertThrows(
-            DomainValidationException::class.java
-        ) {
-            originalAuthor.update(updatedName, updatedDateOfBirth)
-        }
+        val exception =
+            org.junit.jupiter.api.Assertions.assertThrows(
+                DomainValidationException::class.java,
+            ) {
+                originalAuthor.update(updatedName, updatedDateOfBirth)
+            }
 
         assertThat(exception.userMessage).isEqualTo("生年月日は過去の日付である必要があります。")
     }

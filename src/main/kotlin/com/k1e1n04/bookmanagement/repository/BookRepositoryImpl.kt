@@ -54,13 +54,14 @@ class BookRepositoryImpl(
     }
 
     override fun update(book: BookEntity): BookEntity {
-        val updated = dslContext
-            .update(b)
-            .set(b.TITLE, book.title)
-            .set(b.PRICE, book.price)
-            .set(b.PUBLICATION_STATUS, toPublicationStatus(book.status))
-            .where(b.ID.eq(book.id.toString()))
-            .execute()
+        val updated =
+            dslContext
+                .update(b)
+                .set(b.TITLE, book.title)
+                .set(b.PRICE, book.price)
+                .set(b.PUBLICATION_STATUS, toPublicationStatus(book.status))
+                .where(b.ID.eq(book.id.toString()))
+                .execute()
 
         if (updated == 0) {
             throw NotFoundException(
