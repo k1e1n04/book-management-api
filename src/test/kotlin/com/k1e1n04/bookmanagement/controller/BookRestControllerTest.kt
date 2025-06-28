@@ -149,6 +149,24 @@ class BookRestControllerTest {
     }
 
     @Test
+    fun `POST books should return 400 Bad Request for price exceeding maximum`() {
+        val request =
+            BookRegisterRequest(
+                title = "高額書籍",
+                price = 1000001,
+                authorIds = listOf(AUTHOR_ID_1.toString()),
+                status = PublicationStatusRequest.UNPUBLISHED,
+            )
+
+        mockMvc.perform(
+            post("/api/books")
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(request)),
+        )
+            .andExpect(status().isBadRequest)
+    }
+
+    @Test
     fun `PUT books should update book`() {
         val request =
             BookUpdateRequest(
@@ -199,6 +217,27 @@ class BookRestControllerTest {
                 .content(objectMapper.writeValueAsString(request)),
         )
             .andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun `PUT books should return 400 Bad Request for price exceeding maximum`() {
+        val request =
+            BookUpdateRequest(
+                title = "更新テスト書籍",
+                price = 1000001,
+                authorIds = listOf(AUTHOR_ID_1.toString()),
+                status = PublicationStatusRequest.UNPUBLISHED,
+            )
+
+        mockMvc.perform(
+            put("/api/books/$BOOK_ID_1")
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(request)),
+        )
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.message").value("入力値にエラーがあります。"))
+            .andExpect(jsonPath("$.errors[0].field").value("price"))
+            .andExpect(jsonPath("$.errors[0].message").value("価格は100万円以下である必要があります。"))
     }
 
     @Test

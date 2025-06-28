@@ -1,5 +1,6 @@
 package com.k1e1n04.bookmanagement.request
 
+import jakarta.validation.constraints.Max
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
@@ -16,6 +17,7 @@ data class BookUpdateRequest(
     @field:NotBlank(message = "タイトルは必須です。")
     val title: String,
     @field:Min(value = 0, message = "価格は0以上で入力してください。")
+    @field:Max(value = 1000000, message = "価格は100万円以下である必要があります。")
     val price: Int,
     @field:NotEmpty(message = "著者は1人以上指定してください。")
     val authorIds: List<String>,
