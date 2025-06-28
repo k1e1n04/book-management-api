@@ -11,6 +11,7 @@ import com.k1e1n04.bookmanagement.request.BookRegisterRequest
 import com.k1e1n04.bookmanagement.request.BookUpdateRequest
 import com.k1e1n04.bookmanagement.request.PublicationStatusRequest
 import com.k1e1n04.bookmanagement.response.BookResponse
+import com.k1e1n04.bookmanagement.response.PublicationStatusResponse
 import java.time.LocalDate
 import java.util.UUID
 import org.assertj.core.api.Assertions.assertThat
@@ -54,14 +55,14 @@ class BookServiceImplTest {
                     title = "Book 1",
                     price = 1000,
                     authorIds = listOf(AUTHOR_ID_1.toString(), AUTHOR_ID_2.toString()),
-                    status = PublicationStatus.PUBLISHED.name,
+                    status = PublicationStatusResponse.PUBLISHED,
                 ),
                 BookResponse(
                     id = BOOK_ID_2.toString(),
                     title = "Book 2",
                     price = 1500,
                     authorIds = listOf(AUTHOR_ID_3.toString()),
-                    status = PublicationStatus.UNPUBLISHED.name,
+                    status = PublicationStatusResponse.UNPUBLISHED,
                 ),
             )
 
@@ -106,14 +107,14 @@ class BookServiceImplTest {
                     title = "Book by Author",
                     price = 1200,
                     authorIds = listOf(AUTHOR_ID_1.toString()),
-                    status = PublicationStatus.PUBLISHED.name,
+                    status = PublicationStatusResponse.PUBLISHED
                 ),
                 BookResponse(
                     id = BOOK_ID_2.toString(),
                     title = "Another Book by Author",
                     price = 900,
                     authorIds = listOf(AUTHOR_ID_1.toString()),
-                    status = PublicationStatus.UNPUBLISHED.name,
+                    status = PublicationStatusResponse.UNPUBLISHED
                 ),
             )
 
@@ -182,7 +183,7 @@ class BookServiceImplTest {
         assertThat(actual.title).isEqualTo(request.title)
         assertThat(actual.price).isEqualTo(request.price)
         assertThat(actual.authorIds).hasSize(request.authorIds.size)
-        assertThat(actual.status).isEqualTo(PublicationStatus.UNPUBLISHED.name)
+        assertThat(actual.status).isEqualTo(PublicationStatusResponse.UNPUBLISHED)
     }
 
     @Test
@@ -216,7 +217,7 @@ class BookServiceImplTest {
 
         assertThatThrownBy { bookService.registerBook(request) }
             .isInstanceOf(DomainValidationException::class.java)
-            .hasMessageContaining("著者ID: ${AUTHOR_ID_1}, ${AUTHOR_ID_2} の一部が存在しません。")
+            .hasMessageContaining("著者ID: ${AUTHOR_ID_1}, $AUTHOR_ID_2 の一部が存在しません。")
             .extracting("userMessage")
             .isEqualTo("指定された著者の一部が存在しません。")
     }
@@ -265,7 +266,7 @@ class BookServiceImplTest {
         assertThat(actual.title).isEqualTo(request.title)
         assertThat(actual.price).isEqualTo(request.price)
         assertThat(actual.authorIds).hasSameSizeAs(request.authorIds)
-        assertThat(actual.status).isEqualTo(PublicationStatus.PUBLISHED.name)
+        assertThat(actual.status).isEqualTo(PublicationStatusResponse.PUBLISHED)
     }
 
     @Test
@@ -356,7 +357,7 @@ class BookServiceImplTest {
 
         assertThatThrownBy { bookService.updateBook(BOOK_ID_1.toString(), request) }
             .isInstanceOf(DomainValidationException::class.java)
-            .hasMessageContaining("著者ID: ${AUTHOR_ID_1}, ${AUTHOR_ID_2} の一部が存在しません。")
+            .hasMessageContaining("著者ID: ${AUTHOR_ID_1}, $AUTHOR_ID_2 の一部が存在しません。")
             .extracting("userMessage")
             .isEqualTo("指定された著者の一部が存在しません。")
     }

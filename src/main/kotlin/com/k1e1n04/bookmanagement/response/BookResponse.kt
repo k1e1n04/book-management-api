@@ -14,5 +14,5 @@ data class BookResponse(
     val title: String,
     val price: Int,
     val authorIds: List<String>,
-    val status: String,
+    val status: PublicationStatusResponse,
 )

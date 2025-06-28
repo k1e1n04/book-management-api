@@ -10,6 +10,7 @@ import com.k1e1n04.bookmanagement.request.BookRegisterRequest
 import com.k1e1n04.bookmanagement.request.BookUpdateRequest
 import com.k1e1n04.bookmanagement.request.PublicationStatusRequest
 import com.k1e1n04.bookmanagement.response.BookResponse
+import com.k1e1n04.bookmanagement.response.PublicationStatusResponse
 import java.util.UUID
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -31,7 +32,7 @@ class BookServiceImpl(
                 UUID.fromString(authorId)
             } catch (e: IllegalArgumentException) {
                 throw NotFoundException(
-                    userMessage = "指定された著者は存在しません",
+                    userMessage = "指定された著者は存在しません。",
                     message = "著者IDの形式が不正です: $authorId",
                     cause = e,
                 )
@@ -141,7 +142,19 @@ class BookServiceImpl(
             id = bookEntity.id.toString(),
             title = bookEntity.title,
             authorIds = bookEntity.authorIds.map { it.toString() },
-            status = bookEntity.status.name,
+            status = toPublicationStatusResponse(bookEntity.status),
             price = bookEntity.price,
         )
+
+    /**
+     * ドメインモデルの公開ステータスをレスポンス用の公開ステータスに変換するヘルパーメソッド
+     *
+     * @param status ドメインモデルの公開ステータス
+     * @return レスポンス用の公開ステータス
+     */
+    private fun toPublicationStatusResponse(status: PublicationStatus): PublicationStatusResponse =
+        when (status) {
+            PublicationStatus.PUBLISHED -> PublicationStatusResponse.PUBLISHED
+            PublicationStatus.UNPUBLISHED -> PublicationStatusResponse.UNPUBLISHED
+        }
 }

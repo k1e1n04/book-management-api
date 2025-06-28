@@ -6,6 +6,7 @@ import com.k1e1n04.bookmanagement.request.BookRegisterRequest
 import com.k1e1n04.bookmanagement.request.BookUpdateRequest
 import com.k1e1n04.bookmanagement.request.PublicationStatusRequest
 import com.k1e1n04.bookmanagement.response.BookResponse
+import com.k1e1n04.bookmanagement.response.PublicationStatusResponse
 import com.k1e1n04.bookmanagement.service.BookService
 import java.util.UUID
 import org.junit.jupiter.api.BeforeEach
@@ -57,14 +58,14 @@ class BookRestControllerTest {
                     title = "書籍1",
                     price = 1500,
                     authorIds = listOf(AUTHOR_ID_1.toString()),
-                    status = "PUBLISHED",
+                    status = PublicationStatusResponse.PUBLISHED
                 ),
                 BookResponse(
                     id = BOOK_ID_2.toString(),
                     title = "書籍2",
                     price = 2000,
                     authorIds = listOf(AUTHOR_ID_2.toString()),
-                    status = "UNPUBLISHED",
+                    status = PublicationStatusResponse.UNPUBLISHED
                 ),
             )
 
@@ -109,7 +110,7 @@ class BookRestControllerTest {
                         AUTHOR_ID_1.toString(),
                         AUTHOR_ID_2.toString(),
                     ),
-                status = "UNPUBLISHED",
+                status = PublicationStatusResponse.UNPUBLISHED,
             )
 
         whenever(
@@ -163,7 +164,7 @@ class BookRestControllerTest {
                 title = "更新された書籍",
                 price = 1200,
                 authorIds = listOf(AUTHOR_ID_1.toString()),
-                status = "PUBLISHED",
+                status = PublicationStatusResponse.PUBLISHED,
             )
 
         whenever(bookService.updateBook(eq(BOOK_ID_1.toString()), any<BookUpdateRequest>()))
@@ -209,14 +210,14 @@ class BookRestControllerTest {
                     title = "著者の書籍1",
                     price = 1500,
                     authorIds = listOf(AUTHOR_ID_1.toString()),
-                    status = "PUBLISHED",
+                    status = PublicationStatusResponse.PUBLISHED,
                 ),
                 BookResponse(
                     id = BOOK_ID_2.toString(),
                     title = "著者の書籍2",
                     price = 2000,
                     authorIds = listOf(AUTHOR_ID_1.toString()),
-                    status = "UNPUBLISHED",
+                    status = PublicationStatusResponse.UNPUBLISHED,
                 ),
             )
 
