@@ -78,11 +78,6 @@ tasks.named("compileKotlin") {
     dependsOn("jooqCodegen")
 }
 
-// FlywayマイグレーションをDocker Composeの起動後に実行
-tasks.named("flywayMigrate") {
-    dependsOn(tasks.named("composeUp"))
-}
-
 // jOOQコード生成をFlywayマイグレーションの後に実行
 tasks.named("jooqCodegen") {
     dependsOn(tasks.named("flywayMigrate"))

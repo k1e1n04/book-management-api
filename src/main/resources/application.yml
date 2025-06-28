@@ -6,3 +6,6 @@ spring:
     username: app
     password: password
     driver-class-name: org.postgresql.Driver
+  flyway:
+    # jOOQのコード生成時にマイグレーションは完了しているため無効化
+    enabled: false

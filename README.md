@@ -245,6 +245,19 @@
 
 ### 手順
 
+1. コンテナの起動:
+
+compileの前に、jOOQ のコード生成を行うために、先にコンテナを起動します。※
+```bash
+./gradlew composeUp
+```
+
+※ [MacOSでの実行時の不具合](https://github.com/gradle/gradle/issues/28860)が発生する場合は、以下のコマンドでコンテナを起動してください。
+
+```bash
+docker compose up -d
+```
+
 1. アプリケーション起動:
 
 ```bash
@@ -253,6 +266,20 @@
 
 ## テスト実行
 
+1. コンテナの起動:
+
+compileの前に、jOOQ のコード生成を行うために、先にコンテナを起動します。※
+```bash
+./gradlew composeUp
+```
+
+※ [MacOSでの実行時の不具合](https://github.com/gradle/gradle/issues/28860)が発生する場合は、以下のコマンドでコンテナを起動してください。
+
+```bash
+docker compose up -d
+```
+
+1. テスト実行:
 ```bash
 # 全テスト実行
 ./gradlew test
