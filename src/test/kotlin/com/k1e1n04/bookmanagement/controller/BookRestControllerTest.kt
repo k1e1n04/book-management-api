@@ -58,14 +58,14 @@ class BookRestControllerTest {
                     title = "書籍1",
                     price = 1500,
                     authorIds = listOf(AUTHOR_ID_1.toString()),
-                    status = PublicationStatusResponse.PUBLISHED
+                    status = PublicationStatusResponse.PUBLISHED,
                 ),
                 BookResponse(
                     id = BOOK_ID_2.toString(),
                     title = "書籍2",
                     price = 2000,
                     authorIds = listOf(AUTHOR_ID_2.toString()),
-                    status = PublicationStatusResponse.UNPUBLISHED
+                    status = PublicationStatusResponse.UNPUBLISHED,
                 ),
             )
 

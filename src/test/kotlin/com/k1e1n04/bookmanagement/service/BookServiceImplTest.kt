@@ -107,14 +107,14 @@ class BookServiceImplTest {
                     title = "Book by Author",
                     price = 1200,
                     authorIds = listOf(AUTHOR_ID_1.toString()),
-                    status = PublicationStatusResponse.PUBLISHED
+                    status = PublicationStatusResponse.PUBLISHED,
                 ),
                 BookResponse(
                     id = BOOK_ID_2.toString(),
                     title = "Another Book by Author",
                     price = 900,
                     authorIds = listOf(AUTHOR_ID_1.toString()),
-                    status = PublicationStatusResponse.UNPUBLISHED
+                    status = PublicationStatusResponse.UNPUBLISHED,
                 ),
             )
 
