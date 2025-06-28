@@ -202,40 +202,6 @@ class BookRepositoryImplTest {
     }
 
     @Test
-    @Sql("/data/insert_authors.sql")
-    fun `save throws DomainValidationException when price is negative`() {
-        val newBook =
-            BookEntity(
-                id = UUID.randomUUID(),
-                title = "無効な価格の書籍",
-                price = -100,
-                status = PublicationStatus.UNPUBLISHED,
-                authorIds = listOf(AUTHOR_ID_1),
-            )
-
-        assertThatThrownBy { bookRepository.save(newBook) }
-            .isInstanceOf(DataIntegrityViolationException::class.java)
-            .hasMessageContaining("書籍の価格は0以上でなければなりません。")
-    }
-
-    @Test
-    @Sql("/data/insert_authors.sql")
-    fun `save throws DomainValidationException when price is over maximum`() {
-        val newBook =
-            BookEntity(
-                id = UUID.randomUUID(),
-                title = "高価格の書籍",
-                price = 1000001,
-                status = PublicationStatus.UNPUBLISHED,
-                authorIds = listOf(AUTHOR_ID_1),
-            )
-
-        assertThatThrownBy { bookRepository.save(newBook) }
-            .isInstanceOf(DataIntegrityViolationException::class.java)
-            .hasMessageContaining("書籍の価格は0以上でなければなりません。")
-    }
-
-    @Test
     fun `save throws DataIntegrityViolationException when book has non-existing author IDs`() {
         val invalidAuthorIds =
             listOf(

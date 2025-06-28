@@ -22,8 +22,14 @@ data class BookEntity(
         }
         require(price >= 0) {
             throw DomainValidationException(
-                message = "書籍の価格は0以上でなければなりません。price: $price",
-                userMessage = "書籍の価格は0以上でなければなりません。",
+                message = "書籍の価格は0円以上でなければなりません。price: $price",
+                userMessage = "書籍の価格は0円以上でなければなりません。",
+            )
+        }
+        require(price <= 1_000_000) {
+            throw DomainValidationException(
+                message = "書籍の価格は100万円以下でなければなりません。price: $price",
+                userMessage = "書籍の価格は100万円以下でなければなりません。",
             )
         }
         require(authorIds.isNotEmpty()) {

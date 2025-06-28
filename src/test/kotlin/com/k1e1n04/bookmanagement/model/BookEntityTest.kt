@@ -167,7 +167,7 @@ class BookEntityTest {
         assertThatThrownBy {
             BookEntity.new(title, price, authorIds, PublicationStatus.UNPUBLISHED)
         }.isInstanceOf(DomainValidationException::class.java)
-            .hasMessageContaining("書籍の価格は0以上でなければなりません。")
+            .hasMessageContaining("書籍の価格は0円以上でなければなりません。")
     }
 
     @Test
@@ -206,6 +206,18 @@ class BookEntityTest {
             .hasMessageContaining("書籍の著者IDは重複してはいけません。")
     }
 
+    @Test
+    fun `new throws exception for exceeding maximum price`() {
+        val title = "Test Book"
+        val price = 1000001
+        val authorIds = listOf(AUTHOR_ID_1, AUTHOR_ID_2)
+
+        assertThatThrownBy {
+            BookEntity.new(title, price, authorIds, PublicationStatus.UNPUBLISHED)
+        }.isInstanceOf(DomainValidationException::class.java)
+            .hasMessageContaining("書籍の価格は100万円以下でなければなりません。")
+    }
+    
     @Test
     fun `update returns updated book entity`() {
         val book =
@@ -334,7 +346,28 @@ class BookEntityTest {
                 status = PublicationStatus.PUBLISHED,
             )
         }.isInstanceOf(DomainValidationException::class.java)
-            .hasMessageContaining("書籍の価格は0以上でなければなりません。")
+            .hasMessageContaining("書籍の価格は0円以上でなければなりません。")
+    }
+
+    @Test
+    fun `update throws exception for exceeding maximum price`() {
+        val book =
+            BookEntity.new(
+                title = "Old Title",
+                price = 1000,
+                authorIds = listOf(AUTHOR_ID_1, AUTHOR_ID_2),
+                status = PublicationStatus.UNPUBLISHED,
+            )
+
+        assertThatThrownBy {
+            book.update(
+                title = "New Title",
+                price = 1000001,
+                authorIds = listOf(AUTHOR_ID_1, AUTHOR_ID_2),
+                status = PublicationStatus.PUBLISHED,
+            )
+        }.isInstanceOf(DomainValidationException::class.java)
+            .hasMessageContaining("書籍の価格は100万円以下でなければなりません。")
     }
 
     @Test
