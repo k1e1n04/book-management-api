@@ -1,6 +1,8 @@
 spring:
   application:
     name: book-management-api
-  docker:
-    compose:
-      file: ./compose.yaml
+  datasource:
+    url: jdbc:postgresql://localhost:5432/book_management
+    username: app
+    password: password
+    driver-class-name: org.postgresql.Driver
