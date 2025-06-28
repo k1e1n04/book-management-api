@@ -38,7 +38,7 @@ class AuthorServiceImpl(
                 UUID.fromString(id)
             } catch (e: IllegalArgumentException) {
                 throw NotFoundException(
-                    userMessage = "指定された著者は存在しません",
+                    userMessage = "指定された著者は存在しません。",
                     message = "著者IDの形式が不正です: $id",
                     cause = e,
                 )
@@ -47,7 +47,7 @@ class AuthorServiceImpl(
         val existingAuthor =
             authorRepository.findById(authorId)
                 ?: throw NotFoundException(
-                    userMessage = "指定された著者は存在しません",
+                    userMessage = "指定された著者は存在しません。",
                     message = "著者ID: $authorId は存在しません",
                 )
 

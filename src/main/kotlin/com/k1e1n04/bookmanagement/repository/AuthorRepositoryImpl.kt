@@ -68,7 +68,7 @@ class AuthorRepositoryImpl(
 
         if (updatedRows == 0) {
             throw NotFoundException(
-                userMessage = "指定された著者は存在しません",
+                userMessage = "指定された著者は存在しません。",
                 message = "著者ID: ${author.id}は存在しません",
             )
         }

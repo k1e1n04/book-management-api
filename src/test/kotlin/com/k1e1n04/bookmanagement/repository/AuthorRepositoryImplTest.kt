@@ -215,7 +215,7 @@ class AuthorRepositoryImplTest {
             .isInstanceOf(NotFoundException::class.java)
             .hasMessage("著者ID: ${NON_EXISTENT_AUTHOR_ID_1}は存在しません")
             .extracting("userMessage")
-            .isEqualTo("指定された著者は存在しません")
+            .isEqualTo("指定された著者は存在しません。")
     }
 
     @Test

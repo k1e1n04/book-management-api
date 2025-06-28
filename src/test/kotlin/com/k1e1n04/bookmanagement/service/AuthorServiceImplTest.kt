@@ -154,7 +154,7 @@ class AuthorServiceImplTest {
             .isInstanceOf(NotFoundException::class.java)
             .hasMessage("著者ID: $AUTHOR_ID_1 は存在しません")
             .extracting("userMessage")
-            .isEqualTo("指定された著者は存在しません")
+            .isEqualTo("指定された著者は存在しません。")
     }
 
     @Test
@@ -170,7 +170,7 @@ class AuthorServiceImplTest {
             .isInstanceOf(NotFoundException::class.java)
             .hasMessage("著者IDの形式が不正です: $invalidAuthorId")
             .extracting("userMessage")
-            .isEqualTo("指定された著者は存在しません")
+            .isEqualTo("指定された著者は存在しません。")
     }
 
     @Test
