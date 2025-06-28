@@ -1,0 +1,4 @@
+spring:
+  flyway:
+    # テスト時はTestcontainersを使用するため、Flywayのマイグレーションは有効化
+    enabled: true
