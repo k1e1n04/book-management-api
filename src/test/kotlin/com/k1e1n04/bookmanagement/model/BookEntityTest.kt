@@ -217,7 +217,7 @@ class BookEntityTest {
         }.isInstanceOf(DomainValidationException::class.java)
             .hasMessageContaining("書籍の価格は100万円以下でなければなりません。")
     }
-    
+
     @Test
     fun `update returns updated book entity`() {
         val book =
