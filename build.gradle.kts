@@ -98,9 +98,9 @@ jooq {
     configuration {
         jdbc {
             driver = "org.postgresql.Driver"
-            url = System.getenv("DB_URL") ?: "jdbc:postgresql://localhost:5432/book_management"
-            user = System.getenv("DB_USER") ?: "app"
-            password = System.getenv("DB_PASSWORD") ?: "password"
+            url = "jdbc:postgresql://localhost:5432/book_management"
+            user = "app"
+            password = "password"
         }
 
         generator {
@@ -119,8 +119,8 @@ jooq {
 }
 
 flyway {
-    url = System.getenv("DB_URL") ?: "jdbc:postgresql://localhost:5432/book_management"
-    user = System.getenv("DB_USER") ?: "app"
-    password = System.getenv("DB_PASSWORD") ?: "password"
+    url = "jdbc:postgresql://localhost:5432/book_management"
+    user = "app"
+    password = "password"
     locations = arrayOf("classpath:db/migration")
 }
